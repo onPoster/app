@@ -21,15 +21,10 @@ const CONTRACT_ADDRESS = '0xA0c7A49916Ce3ed7dd15871550212fcc7079AD61'
  * Prop Types
  */
 type StateType = {
-  greeting: string
   inputValue: string
   isLoading: boolean
 }
 type ActionType =
-  | {
-      type: 'SET_GREETING'
-      greeting: StateType['greeting']
-    }
   | {
       type: 'SET_INPUT_VALUE'
       inputValue: StateType['inputValue']
@@ -43,19 +38,12 @@ type ActionType =
  * Component
  */
 const initialState: StateType = {
-  greeting: '',
   inputValue: '',
   isLoading: false,
 }
 
 function reducer(state: StateType, action: ActionType): StateType {
   switch (action.type) {
-    // Track the greeting from the blockchain
-    case 'SET_GREETING':
-      return {
-        ...state,
-        greeting: action.greeting,
-      }
     case 'SET_INPUT_VALUE':
       return {
         ...state,
@@ -83,26 +71,8 @@ function HomeIndex(): JSX.Element {
     signer: localProvider.getSigner(),
   })
 
-  // call the smart contract, read the current greeting value
-  async function fetchContractGreeting() {
-    if (library) {
-      const contract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        Poster.abi,
-        library
-      ) as unknown as PosterType
-      try {
-        const data = await contract.greeting()
-        dispatch({ type: 'SET_GREETING', greeting: data })
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log('Error: ', err)
-      }
-    }
-  }
-
   // call the smart contract, send an update
-  async function setContractGreeting() {
+  async function setPostContent() {
     if (!state.inputValue) return
     if (library) {
       dispatch({
@@ -115,12 +85,15 @@ function HomeIndex(): JSX.Element {
         Poster.abi,
         signer
       ) as unknown as PosterType
-      const transaction = await contract.setGreeting(state.inputValue)
+      const transaction = await contract.post(state.inputValue)
       await transaction.wait()
-      fetchContractGreeting()
       dispatch({
         type: 'SET_LOADING',
         isLoading: false,
+      })
+      dispatch({
+        type: 'SET_INPUT_VALUE',
+        inputValue: ''
       })
     }
   }
@@ -135,37 +108,19 @@ function HomeIndex(): JSX.Element {
   return (
     <Layout>
       <Heading as="h1" mb="8">
-        Next.js Ethereum Starter
+        Poster
       </Heading>
-      <Button
-        as="a"
-        size="lg"
-        colorScheme="teal"
-        variant="outline"
-        href="https://github.com/ChangoMan/nextjs-ethereum-starter"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Get the source code!
-      </Button>
       <Text mt="8" fontSize="xl">
-        This page only works on the ROPSTEN Testnet or on a Local Chain.
+        A general purpose social media based on a ridiculously simple smart
+        contract.
       </Text>
       <Box maxWidth="container.sm" p="8" mt="8" bg="gray.100">
-        <Text fontSize="xl">Contract Address: {CONTRACT_ADDRESS}</Text>
-        <Divider my="8" borderColor="gray.400" />
-        <Box>
-          <Text fontSize="lg">Greeting: {state.greeting}</Text>
-          <Button mt="2" colorScheme="teal" onClick={fetchContractGreeting}>
-            Fetch Greeting
-          </Button>
-        </Box>
-        <Divider my="8" borderColor="gray.400" />
         <Box>
           <Input
             bg="white"
             type="text"
-            placeholder="Enter a Greeting"
+            value={state.inputValue}
+            placeholder="Post something funny"
             onChange={(e) => {
               dispatch({
                 type: 'SET_INPUT_VALUE',
@@ -177,20 +132,23 @@ function HomeIndex(): JSX.Element {
             mt="2"
             colorScheme="teal"
             isLoading={state.isLoading}
-            onClick={setContractGreeting}
+            onClick={setPostContent}
           >
-            Set Greeting
+            Post
           </Button>
         </Box>
-        <Divider my="8" borderColor="gray.400" />
-        <Text mb="4">This button only works on a Local Chain.</Text>
-        <Button
-          colorScheme="teal"
-          onClick={sendFunds}
-          isDisabled={!isLocalChain}
-        >
-          Send Funds From Local Hardhat Chain
-        </Button>
+        {chainId === 31337 && (
+          <Box mt="20px">
+            <Text mb="4">This button only works on a Local Chain.</Text>
+            <Button
+              colorScheme="teal"
+              onClick={sendFunds}
+              isDisabled={!isLocalChain}
+            >
+              Send Funds From Local Hardhat Chain
+            </Button>
+          </Box>
+        )}
       </Box>
     </Layout>
   )

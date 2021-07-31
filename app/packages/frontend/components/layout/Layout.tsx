@@ -88,11 +88,6 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
                   Graph Example
                 </Link>
               </NextLink>
-              <NextLink href="/signature-example" passHref>
-                <Link px="4" py="1">
-                  Signature Example
-                </Link>
-              </NextLink>
             </Flex>
             {account ? (
               <Flex
