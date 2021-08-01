@@ -4,7 +4,7 @@ import Layout from '../components/layout/Layout'
 
 const COMPOUND_MARKETS = gql`
   query GetAllPosts {
-    posts(first: 5) {
+    posts(first: 5, orderBy: id, orderDirection:desc) {
       id
       poster
       type
