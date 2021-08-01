@@ -1,10 +1,12 @@
 import { gql, useQuery } from '@apollo/client'
 import { Alert, AlertIcon, Box, Heading, Text } from '@chakra-ui/react'
+import { useEthers } from '@usedapp/core'
+import { ENS } from '../components/atoms/ENS'
 import Layout from '../components/layout/Layout'
 
 const COMPOUND_MARKETS = gql`
   query GetAllPosts {
-    posts(first: 5, orderBy: id, orderDirection:desc) {
+    posts(first: 5, orderBy: id, orderDirection: desc) {
       id
       poster
       type
@@ -35,15 +37,12 @@ function GraphExampleIndex(): JSX.Element {
       )}
       {!loading &&
         !error &&
-        data.posts.map(
-          ({ id, poster, type, content }) => (
-            <Box key={id} mt="8">
-              <Text>Poster: {poster}</Text>
-              <Text>Type: {type}</Text>
-              <Text>Content: {content}</Text>
-            </Box>
-          )
-        )}
+        data.posts.map(({ id, poster, type, content }) => (
+          <Box key={id} mt="8">
+            <ENS address={poster} />
+            <Text>{content}</Text>
+          </Box>
+        ))}
     </Layout>
   )
 }

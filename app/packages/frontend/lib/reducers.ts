@@ -85,5 +85,9 @@ export async function setPostContent(
       type: 'SET_INPUT_VALUE',
       inputValue: ''
     })
+    dispatch({
+      type: 'SET_CHARACTERS_AMOUNT',
+      charactersAmount: 0
+    })
   }
 }
