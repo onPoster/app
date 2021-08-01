@@ -16,7 +16,9 @@
     ],
     "nohoist": [
       "**/hardhat",
-      "**/hardhat/**"
+      "**/hardhat/**",
+      "**/@graphprotocol",
+      "**/@graphprotocol/**"
     ]
   }
 }

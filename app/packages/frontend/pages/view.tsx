@@ -3,12 +3,12 @@ import { Alert, AlertIcon, Box, Heading, Text } from '@chakra-ui/react'
 import Layout from '../components/layout/Layout'
 
 const COMPOUND_MARKETS = gql`
-  query GetAllMarkets {
-    markets(first: 5) {
+  query GetAllPosts {
+    posts(first: 5) {
       id
-      underlyingName
-      underlyingSymbol
-      underlyingPriceUSD
+      poster
+      type
+      content
     }
   }
 `
@@ -19,7 +19,7 @@ function GraphExampleIndex(): JSX.Element {
   return (
     <Layout>
       <Heading as="h1" mb="12">
-        The Graph Query Page
+        View your tweets
       </Heading>
       {loading && (
         <Alert status="warning">
@@ -35,12 +35,12 @@ function GraphExampleIndex(): JSX.Element {
       )}
       {!loading &&
         !error &&
-        data.markets.map(
-          ({ id, underlyingName, underlyingSymbol, underlyingPriceUSD }) => (
+        data.posts.map(
+          ({ id, poster, type, content }) => (
             <Box key={id} mt="8">
-              <Text>Name: {underlyingName}</Text>
-              <Text>Symbol: {underlyingSymbol}</Text>
-              <Text>Price: ${underlyingPriceUSD}</Text>
+              <Text>Poster: {poster}</Text>
+              <Text>Type: {type}</Text>
+              <Text>Content: {content}</Text>
             </Box>
           )
         )}

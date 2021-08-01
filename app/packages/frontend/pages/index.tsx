@@ -112,7 +112,7 @@ function HomeIndex(): JSX.Element {
       </Heading>
       <Text mt="8" fontSize="xl">
         A general purpose social media based on a ridiculously simple smart
-        contract.
+        contract (available only in Görli atm)
       </Text>
       <Box maxWidth="container.sm" p="8" mt="8" bg="gray.100">
         <Box>

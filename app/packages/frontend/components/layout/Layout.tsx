@@ -83,9 +83,9 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
                   Home
                 </Link>
               </NextLink>
-              <NextLink href="/graph-example" passHref>
+              <NextLink href="/view" passHref>
                 <Link px="4" py="1">
-                  Graph Example
+                  View
                 </Link>
               </NextLink>
             </Flex>
@@ -153,6 +153,8 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
         <Container mt="8" py="8" maxWidth="container.xl">
           <Text>
             Built by{' '}
+            <Link href="https://twitter.com/auryn_macmillan">Auryn Macmillan</Link>{' '}
+            and{' '}
             <Link href="https://twitter.com/jjperezaguinaga">Jose Aguinaga</Link>
           </Text>
         </Container>
