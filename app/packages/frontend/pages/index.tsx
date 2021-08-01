@@ -1,16 +1,24 @@
 import {
   Box,
   Button,
-  Heading,
-  Input,
+  Tag,
   InputGroup,
   InputRightElement,
   Text,
   Textarea,
+  useColorMode,
+  SimpleGrid,
 } from '@chakra-ui/react'
-import { ChainId, useEthers, useSendTransaction } from '@usedapp/core'
-import { ethers, providers, utils } from 'ethers'
-import React, { useReducer } from 'react'
+import {
+  ChainId,
+  useBlockNumber,
+  useEthers,
+  useSendTransaction,
+} from '@usedapp/core'
+import { providers, utils } from 'ethers'
+import React, { useEffect, useReducer, useState } from 'react'
+import { DarkModeSwitch } from '../components/atoms/DarkModeSwitch'
+import { ViewGraph } from '../components/atoms/ViewGraph'
 
 import Layout from '../components/layout/Layout'
 import { initialState, reducer, setPostContent } from '../lib/reducers'
@@ -27,9 +35,18 @@ const localProvider = new providers.StaticJsonRpcProvider(
 const POSTER_CONTRACT_ADDRESS = '0xA0c7A49916Ce3ed7dd15871550212fcc7079AD61'
 const MAX_AMOUNT_OF_CHARACTERS = 300
 
+const bgColor = {
+  containers: { light: 'gray.100', dark: 'gray.900' },
+  textArea: { light: 'alphaWhite.100', dark: 'gray.900' },
+}
+const color = { light: '#414141', dark: 'white' }
+
 function HomeIndex(): JSX.Element {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { account, chainId, library } = useEthers()
+  const { colorMode } = useColorMode()
+  const block = useBlockNumber()
+  const [blockUpdates, setBlockUpdates] = useState<number>(0)
 
   const remainingCharacters = MAX_AMOUNT_OF_CHARACTERS - state.charactersAmount
 
@@ -48,67 +65,95 @@ function HomeIndex(): JSX.Element {
     })
   }
 
+  useEffect(() => {
+    setBlockUpdates(blockUpdates + 1)
+  }, [block])
+
   return (
     <Layout>
-      <Heading as="h1" mb="8">
-        Poster
-      </Heading>
-      <Text mt="8" fontSize="xl">
-        A general purpose social media based on a ridiculously simple smart
-        contract (available only in Görli atm)
-      </Text>
-      <Box maxWidth="container.sm" p="8" mt="8" bg="gray.100">
-        <Box>
-          <InputGroup size="sm">
-            <Textarea
-              bg="white"
-              type="text"
-              rows={10}
-              cols={10}
-              isDisabled={state.isLoading}
-              wrap="soft"
-              maxlength="300"
-              style={{ overflow: 'hidden', resize: 'none' }}
-              value={state.inputValue}
-              placeholder="Post something funny"
-              onChange={(e) => {
-                dispatch({
-                  type: 'SET_CHARACTERS_AMOUNT',
-                  charactersAmount: e.target.value.length
-                })
-                dispatch({
-                  type: 'SET_INPUT_VALUE',
-                  inputValue: e.target.value,
-                })
-              }}
-            />
-            <InputRightElement children={<Text color={remainingCharacters < 10 ? "yellow.500" : "alphaBlack"}>{`${remainingCharacters}`}</Text>} />
-          </InputGroup>
-
-          <Button
-            mt="2"
-            colorScheme="teal"
-            isLoading={state.isLoading}
-            onClick={() =>
-              setPostContent(POSTER_CONTRACT_ADDRESS, state, library, dispatch)
-            }
-          >
-            Post
-          </Button>
+      <Box d="flex" justifyContent="space-between">
+        <Box d="flex">
+          <Text>Networks Available</Text>
+          <Tag ml="2">Goerli</Tag>
         </Box>
-        {chainId === 31337 && (
-          <Box mt="20px">
-            <Text mb="4">This button only works on a Local Chain.</Text>
+        <Box d="flex">
+          <Text>New blocks since load</Text>
+          <Tag ml="2">{blockUpdates}</Tag>
+        </Box>
+      </Box>
+      <SimpleGrid columns={2}>
+        <Box
+          maxWidth="container.sm"
+          p="8"
+          mt="8"
+          bg={bgColor.containers[colorMode]}
+        >
+          <Box>
+            <InputGroup size="sm">
+              <Textarea
+                bg={bgColor.textArea[colorMode]}
+                color={color[colorMode]}
+                type="text"
+                rows={10}
+                cols={10}
+                isDisabled={state.isLoading}
+                wrap="soft"
+                maxLength={300}
+                style={{ overflow: 'hidden', resize: 'none' }}
+                value={state.inputValue}
+                placeholder="Post something funny"
+                onChange={(e) => {
+                  dispatch({
+                    type: 'SET_CHARACTERS_AMOUNT',
+                    charactersAmount: e.target.value.length,
+                  })
+                  dispatch({
+                    type: 'SET_INPUT_VALUE',
+                    inputValue: e.target.value,
+                  })
+                }}
+              />
+              <InputRightElement>
+                <Text
+                  color={remainingCharacters < 10 ? 'yellow.500' : 'alphaBlack'}
+                >{`${remainingCharacters}`}</Text>
+              </InputRightElement>
+            </InputGroup>
+
             <Button
+              mt="2"
               colorScheme="teal"
-              onClick={sendFunds}
-              isDisabled={!isLocalChain}
+              isLoading={state.isLoading}
+              onClick={() =>
+                setPostContent(
+                  POSTER_CONTRACT_ADDRESS,
+                  state,
+                  library,
+                  dispatch
+                )
+              }
             >
-              Send Funds From Local Hardhat Chain
+              Post
             </Button>
           </Box>
-        )}
-      </Box>
+          {chainId === 31337 && (
+            <Box mt="20px">
+              <Text mb="4">This button only works on a Local Chain.</Text>
+              <Button
+                colorScheme="teal"
+                onClick={sendFunds}
+                isDisabled={!isLocalChain}
+              >
+                Send Funds From Local Hardhat Chain
+              </Button>
+            </Box>
+          )}
+        </Box>
+        <Box p="5">
+          <ViewGraph />
+        </Box>
+      </SimpleGrid>
+      <DarkModeSwitch />
     </Layout>
   )
 }

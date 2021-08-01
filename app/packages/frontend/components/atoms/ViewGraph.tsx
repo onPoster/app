@@ -1,8 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
-import { Alert, AlertIcon, Box, Heading, Text } from '@chakra-ui/react'
-import { useEthers } from '@usedapp/core'
-import { ENS } from '../components/atoms/ENS'
-import Layout from '../components/layout/Layout'
+import { Alert, AlertIcon, Box, Text } from '@chakra-ui/react'
+import { ENS } from './ENS'
 
 const COMPOUND_MARKETS = gql`
   query GetAllPosts {
@@ -15,14 +13,11 @@ const COMPOUND_MARKETS = gql`
   }
 `
 
-function GraphExampleIndex(): JSX.Element {
+export const ViewGraph = (): JSX.Element => {
   const { loading, error, data } = useQuery(COMPOUND_MARKETS)
 
   return (
-    <Layout>
-      <Heading as="h1" mb="12">
-        View all posts
-      </Heading>
+    <>
       {loading && (
         <Alert status="warning">
           <AlertIcon />
@@ -37,14 +32,12 @@ function GraphExampleIndex(): JSX.Element {
       )}
       {!loading &&
         !error &&
-        data.posts.map(({ id, poster, type, content }) => (
+        data.posts.map(({ id, poster, content }) => (
           <Box key={id} mt="8">
             <ENS address={poster} />
             <Text>{content}</Text>
           </Box>
         ))}
-    </Layout>
+    </>
   )
 }
-
-export default GraphExampleIndex
