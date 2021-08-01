@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Heading,
   Tag,
   InputGroup,
   InputRightElement,
@@ -16,7 +15,7 @@ import {
   useEthers,
   useSendTransaction,
 } from '@usedapp/core'
-import { ethers, providers, utils } from 'ethers'
+import { providers, utils } from 'ethers'
 import React, { useEffect, useReducer, useState } from 'react'
 import { DarkModeSwitch } from '../components/atoms/DarkModeSwitch'
 import { ViewGraph } from '../components/atoms/ViewGraph'
@@ -72,15 +71,6 @@ function HomeIndex(): JSX.Element {
 
   return (
     <Layout>
-      <Box d="flex" alignItems="baseline">
-        <Heading as="h1" mb="8">
-          Poster
-        </Heading>
-        <Text ml="2" fontSize="xl">
-          A general purpose social media based on a ridiculously simple smart
-          contract
-        </Text>
-      </Box>
       <Box d="flex" justifyContent="space-between">
         <Box d="flex">
           <Text>Networks Available</Text>
@@ -123,15 +113,11 @@ function HomeIndex(): JSX.Element {
                   })
                 }}
               />
-              <InputRightElement
-                children={
-                  <Text
-                    color={
-                      remainingCharacters < 10 ? 'yellow.500' : 'alphaBlack'
-                    }
-                  >{`${remainingCharacters}`}</Text>
-                }
-              />
+              <InputRightElement>
+                <Text
+                  color={remainingCharacters < 10 ? 'yellow.500' : 'alphaBlack'}
+                >{`${remainingCharacters}`}</Text>
+              </InputRightElement>
             </InputGroup>
 
             <Button

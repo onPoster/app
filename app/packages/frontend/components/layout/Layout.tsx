@@ -7,6 +7,7 @@ import {
   Button,
   Container,
   Flex,
+  Heading,
   Image,
   Link,
   Menu,
@@ -18,7 +19,6 @@ import {
 } from '@chakra-ui/react'
 import { useEthers, useNotifications } from '@usedapp/core'
 import blockies from 'blockies-ts'
-import NextLink from 'next/link'
 import React from 'react'
 import Balance from '../Balance'
 import ConnectWallet from '../ConnectWallet'
@@ -77,18 +77,15 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
             justifyContent="space-between"
             py="8"
           >
-            <Flex py={[4, null, null, 0]}>
-              <NextLink href="/" passHref>
-                <Link px="4" py="1">
-                  Home
-                </Link>
-              </NextLink>
-              <NextLink href="/view" passHref>
-                <Link px="4" py="1">
-                  View
-                </Link>
-              </NextLink>
-            </Flex>
+            <Box d="flex" alignItems="baseline">
+              <Heading as="h1" m="auto">
+                Poster
+              </Heading>
+              <Text ml="5" fontSize="lg">
+                A general purpose social media based on a ridiculously simple
+                smart contract
+              </Text>
+            </Box>
             {account ? (
               <Flex
                 order={[-1, null, null, 2]}
@@ -153,9 +150,13 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
         <Container mt="8" py="8" maxWidth="container.xl">
           <Text>
             Built by{' '}
-            <Link href="https://twitter.com/auryn_macmillan">Auryn Macmillan</Link>{' '}
+            <Link href="https://twitter.com/auryn_macmillan">
+              Auryn Macmillan
+            </Link>{' '}
             and{' '}
-            <Link href="https://twitter.com/jjperezaguinaga">Jose Aguinaga</Link>
+            <Link href="https://twitter.com/jjperezaguinaga">
+              Jose Aguinaga
+            </Link>
           </Text>
         </Container>
       </footer>

@@ -32,7 +32,7 @@ export const ViewGraph = (): JSX.Element => {
       )}
       {!loading &&
         !error &&
-        data.posts.map(({ id, poster, type, content }) => (
+        data.posts.map(({ id, poster, content }) => (
           <Box key={id} mt="8">
             <ENS address={poster} />
             <Text>{content}</Text>
