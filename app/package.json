@@ -6,6 +6,7 @@
     "dev": "yarn workspace @poster/app dev",
     "build": "yarn workspace @poster/app build",
     "start": "yarn workspace @poster/app start",
+    "export": "yarn workspace @poster/app export",
     "chain": "yarn workspace @poster/contracts chain",
     "deploy": "yarn workspace @poster/contracts deploy",
     "compile": "yarn workspace @poster/contracts compile"
