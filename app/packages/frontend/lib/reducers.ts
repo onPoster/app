@@ -9,6 +9,7 @@ import { Poster as PosterType } from '@poster/contracts/typechain'
 type StateType = {
   inputValue: string
   isLoading: boolean
+  charactersAmount: number
 }
 type ActionType =
   | {
@@ -19,6 +20,11 @@ type ActionType =
     type: 'SET_LOADING'
     isLoading: StateType['isLoading']
   }
+  | {
+    type: 'SET_CHARACTERS_AMOUNT'
+    charactersAmount: StateType['charactersAmount']
+  }
+  
 
 /**
  * Component
@@ -26,6 +32,7 @@ type ActionType =
 export const initialState: StateType = {
   inputValue: '',
   isLoading: false,
+  charactersAmount: 0
 }
 
 export function reducer(state: StateType, action: ActionType): StateType {
@@ -34,6 +41,11 @@ export function reducer(state: StateType, action: ActionType): StateType {
       return {
         ...state,
         inputValue: action.inputValue,
+      }
+    case 'SET_CHARACTERS_AMOUNT':
+      return {
+        ...state,
+        charactersAmount: action.charactersAmount
       }
     case 'SET_LOADING':
       return {

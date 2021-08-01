@@ -19,7 +19,7 @@ function GraphExampleIndex(): JSX.Element {
   return (
     <Layout>
       <Heading as="h1" mb="12">
-        View your tweets
+        View all posts
       </Heading>
       {loading && (
         <Alert status="warning">

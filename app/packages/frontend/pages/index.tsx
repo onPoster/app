@@ -1,4 +1,13 @@
-import { Box, Button, Heading, Input, Text } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Heading,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Text,
+  Textarea,
+} from '@chakra-ui/react'
 import { ChainId, useEthers, useSendTransaction } from '@usedapp/core'
 import { ethers, providers, utils } from 'ethers'
 import React, { useReducer } from 'react'
@@ -16,10 +25,13 @@ const localProvider = new providers.StaticJsonRpcProvider(
 
 // Single address across all networks due to Singleton Factory pattern
 const POSTER_CONTRACT_ADDRESS = '0xA0c7A49916Ce3ed7dd15871550212fcc7079AD61'
+const MAX_AMOUNT_OF_CHARACTERS = 300
 
 function HomeIndex(): JSX.Element {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { account, chainId, library } = useEthers()
+
+  const remainingCharacters = MAX_AMOUNT_OF_CHARACTERS - state.charactersAmount
 
   const isLocalChain =
     chainId === ChainId.Localhost || chainId === ChainId.Hardhat
@@ -47,18 +59,32 @@ function HomeIndex(): JSX.Element {
       </Text>
       <Box maxWidth="container.sm" p="8" mt="8" bg="gray.100">
         <Box>
-          <Input
-            bg="white"
-            type="text"
-            value={state.inputValue}
-            placeholder="Post something funny"
-            onChange={(e) => {
-              dispatch({
-                type: 'SET_INPUT_VALUE',
-                inputValue: e.target.value,
-              })
-            }}
-          />
+          <InputGroup size="sm">
+            <Textarea
+              bg="white"
+              type="text"
+              rows={10}
+              cols={10}
+              isDisabled={state.isLoading}
+              wrap="soft"
+              maxlength="300"
+              style={{ overflow: 'hidden', resize: 'none' }}
+              value={state.inputValue}
+              placeholder="Post something funny"
+              onChange={(e) => {
+                dispatch({
+                  type: 'SET_CHARACTERS_AMOUNT',
+                  charactersAmount: e.target.value.length
+                })
+                dispatch({
+                  type: 'SET_INPUT_VALUE',
+                  inputValue: e.target.value,
+                })
+              }}
+            />
+            <InputRightElement children={<Text color={remainingCharacters < 10 ? "yellow.500" : "alphaBlack"}>{`${remainingCharacters}`}</Text>} />
+          </InputGroup>
+
           <Button
             mt="2"
             colorScheme="teal"
