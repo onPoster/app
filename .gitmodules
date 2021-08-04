@@ -1,3 +1,0 @@
-[submodule "app/packages/hardhat"]
-	path = app/packages/hardhat
-	url = https://github.com/auryn-macmillan/poster.git
