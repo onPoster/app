@@ -1,7 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
-import { Poster as PosterType } from 'Poster/typechain'
+import { Poster as PosterType } from 'Poster/typechain/Poster'
 
 /**
  * Prop Types

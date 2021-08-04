@@ -36,7 +36,7 @@
     "@web3-react/walletconnect-connector": "^6.2.0",
     "blockies-ts": "^1.0.0",
     "deepmerge": "^4.2.2",
-    "ethers": "^5.1.4",
+    "ethers": "^5.0.32",
     "framer-motion": "^4",
     "graphql": "^15.3.0",
     "lodash": "4.17.20",
@@ -64,6 +64,6 @@
     "jest-watch-typeahead": "^0.6.1",
     "lint-staged": "^10.0.10",
     "prettier": "^2.0.2",
-    "typescript": "^4.3.2"
+    "typescript": "4.3.2"
   }
 }
