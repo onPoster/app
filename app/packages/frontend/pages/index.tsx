@@ -8,6 +8,7 @@ import {
   Textarea,
   useColorMode,
   SimpleGrid,
+  Link,
 } from '@chakra-ui/react'
 import {
   ChainId,
@@ -15,9 +16,11 @@ import {
   useEthers,
   useSendTransaction,
 } from '@usedapp/core'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { providers, utils } from 'ethers'
 import React, { useEffect, useReducer, useState } from 'react'
 import { DarkModeSwitch } from '../components/atoms/DarkModeSwitch'
+import { GitHubIcon } from '../components/atoms/GitHubIcon'
 import { ViewGraph } from '../components/atoms/ViewGraph'
 
 import Layout from '../components/layout/Layout'
@@ -76,12 +79,19 @@ function HomeIndex(): JSX.Element {
           <Text>Networks Available</Text>
           <Tag ml="2">Goerli</Tag>
         </Box>
-        <Box d="flex">
-          <Text>New blocks since load</Text>
-          <Tag ml="2">{blockUpdates}</Tag>
+        <Box d="flex" alignItems="center">
+          <GitHubIcon />
+          <Link
+            mx="2"
+            href="https://github.com/ETHPoster/app/issues/new"
+            isExternal
+          >
+            Suggest feature
+          </Link>
+          <ExternalLinkIcon />
         </Box>
       </Box>
-      <SimpleGrid columns={2}>
+      <SimpleGrid columns={[1, 1, 1, 2]}>
         <Box
           maxWidth="container.sm"
           p="8"

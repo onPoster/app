@@ -27,12 +27,13 @@
   },
   "dependencies": {
     "@apollo/client": "3.1.1",
+    "@chakra-ui/icons": "^1.0.14",
     "@chakra-ui/react": "^1.6.3",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@poster/contracts": "5.0.0",
     "@usedapp/core": "^0.4.1",
     "@web3-react/walletconnect-connector": "^6.2.0",
-    "@poster/contracts": "5.0.0",
     "blockies-ts": "^1.0.0",
     "deepmerge": "^4.2.2",
     "ethers": "^5.1.4",
@@ -41,7 +42,8 @@
     "lodash": "4.17.20",
     "next": "^11.0.1",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "react-icons": "^4.2.0"
   },
   "devDependencies": {
     "@testing-library/react": "^11.2.5",
