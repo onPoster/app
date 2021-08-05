@@ -39,7 +39,7 @@
     "ethers": "^5.0.32",
     "framer-motion": "^4",
     "graphql": "^15.3.0",
-    "lodash": "4.17.20",
+    "lodash": "4.17.21",
     "next": "^11.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
