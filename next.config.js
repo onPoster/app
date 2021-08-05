@@ -1,6 +1,6 @@
 module.exports = {
   assetPrefix: './',
-  exportTrailingSlash: true,
+  trailingSlash: true,
   exportPathMap: function () {
     return {
       '/': { page: '/' },
