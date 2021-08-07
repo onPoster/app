@@ -2,6 +2,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
 import { Poster as PosterType } from 'Poster/typechain/Poster'
+import { SUBGRAPH_RELOADING_TIME_IN_MS } from './constants'
 
 /**
  * Prop Types
@@ -10,8 +11,10 @@ type StateType = {
   inputValue: string
   isLoading: boolean
   charactersAmount: number
+  needsToReloadGetAllPosts: boolean
+  isReloadIntervalLoading: boolean
 }
-type ActionType =
+export type ActionType =
   | {
     type: 'SET_INPUT_VALUE'
     inputValue: StateType['inputValue']
@@ -24,6 +27,14 @@ type ActionType =
     type: 'SET_CHARACTERS_AMOUNT'
     charactersAmount: StateType['charactersAmount']
   }
+  | {
+    type: 'SET_SUBGRAPH_GETALLPOSTS_RELOAD'
+    needsToReloadGetAllPosts: StateType['needsToReloadGetAllPosts']
+  }
+  | {
+    type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING'
+    isReloadIntervalLoading:  StateType['isReloadIntervalLoading']
+  }
   
 
 /**
@@ -32,7 +43,9 @@ type ActionType =
 export const initialState: StateType = {
   inputValue: '',
   isLoading: false,
-  charactersAmount: 0
+  charactersAmount: 0,
+  needsToReloadGetAllPosts: false,
+  isReloadIntervalLoading: false
 }
 
 export function reducer(state: StateType, action: ActionType): StateType {
@@ -51,6 +64,16 @@ export function reducer(state: StateType, action: ActionType): StateType {
       return {
         ...state,
         isLoading: action.isLoading,
+      }
+    case 'SET_SUBGRAPH_GETALLPOSTS_RELOAD':
+      return {
+        ...state,
+        needsToReloadGetAllPosts: action.needsToReloadGetAllPosts,
+      }
+    case 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING':
+      return {
+        ...state,
+        isReloadIntervalLoading: action.isReloadIntervalLoading
       }
     default:
       throw new Error()
@@ -89,5 +112,19 @@ export async function setPostContent(
       type: 'SET_CHARACTERS_AMOUNT',
       charactersAmount: 0
     })
+    dispatch({
+      type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING',
+      isReloadIntervalLoading: true
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'SET_SUBGRAPH_GETALLPOSTS_RELOAD',
+        needsToReloadGetAllPosts: true,
+      })
+      dispatch({
+        type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING',
+        isReloadIntervalLoading: false
+      })
+    }, SUBGRAPH_RELOADING_TIME_IN_MS)
   }
 }

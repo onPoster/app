@@ -1,36 +1,53 @@
-import { gql, useQuery } from '@apollo/client'
-import { Alert, AlertIcon, Box, Skeleton, Text } from '@chakra-ui/react'
+import { useLazyQuery } from '@apollo/client'
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Skeleton,
+  Spinner,
+  Text,
+  Flex,
+} from '@chakra-ui/react'
+import { Dispatch, useEffect } from 'react'
+import { GETALLPOSTS } from '../../lib/queries'
+import { ActionType } from '../../lib/reducers'
 import { ENS } from './ENS'
 
-const GETALLPOSTS = gql`
-  query GetAllPosts {
-    transactions(first: 5, orderBy: blockNumber, orderDirection: desc) {
-      id
-      timestamp
-      blockNumber
-      from {
-        id
-      }
-    }
-    accounts(first: 5, orderBy: id, orderDirection: desc) {
-      id
-      transactions {
-        id
-      }
-      posts {
-        id
-        rawContent
-      }
-    }
-  }
-`
+export const ViewGraph = ({
+  getAllPostsNeedsReload,
+  isReloadIntervalLoading,
+  dispatch,
+}: {
+  getAllPostsNeedsReload: boolean
+  isReloadIntervalLoading: boolean
+  dispatch: Dispatch<ActionType>
+}): JSX.Element => {
+  const [getPosts, { loading, error, data }] = useLazyQuery(GETALLPOSTS, {
+    fetchPolicy: "network-only"
+  })
 
-export const ViewGraph = (): JSX.Element => {
-  const { loading, error, data } = useQuery(GETALLPOSTS)
+  useEffect(() => {
+    const loadPosts = () => {
+      getPosts()
+      dispatch({
+        type: 'SET_SUBGRAPH_GETALLPOSTS_RELOAD',
+        needsToReloadGetAllPosts: false,
+      })
+    }
+    loadPosts()
+  }, [getAllPostsNeedsReload])
+
+  // @TODO Add actual accounts & transactions types
   const accounts = (data && data.accounts) || []
 
   return (
     <>
+      {isReloadIntervalLoading && (
+        <Flex alignContent="center" mt="8">
+          <Spinner mr="4" />
+          <Text>Loading new posts...</Text>
+        </Flex>
+      )}
       {loading && <Skeleton />}
       {error && (
         <Alert status="error">
