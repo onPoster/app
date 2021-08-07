@@ -3,6 +3,7 @@ import { concatPagination } from '@apollo/client/utilities'
 import merge from 'deepmerge'
 import isEqual from 'lodash/isEqual'
 import { useMemo } from 'react'
+import { POSTER_SUBGRAPH_URL } from './constants'
 
 export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__'
 
@@ -13,7 +14,7 @@ function createApolloClient() {
     ssrMode: typeof window === 'undefined',
     link: new HttpLink({
       // Server URL (must be absolute)
-      uri: 'https://api.thegraph.com/subgraphs/name/jjperezaguinaga/poster',
+      uri: POSTER_SUBGRAPH_URL,
       // Additional fetch() options like `credentials` or `headers`
       credentials: 'same-origin',
     }),

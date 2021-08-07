@@ -15,11 +15,15 @@ import {
   MenuItem,
   MenuList,
   SimpleGrid,
+  Tag,
   Text,
+  useColorMode,
+  useMediaQuery,
 } from '@chakra-ui/react'
 import { useEthers, useNotifications } from '@usedapp/core'
 import blockies from 'blockies-ts'
 import React from 'react'
+import { POSTER_APP_VERSION, POSTER_CONTRACT_VERSION, POSTER_SUBGRAPH_ID } from '../../lib/constants'
 import Balance from '../Balance'
 import ConnectWallet from '../ConnectWallet'
 import Head, { MetaProps } from './Head'
@@ -60,10 +64,17 @@ interface LayoutProps {
 const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
   const { account, deactivate } = useEthers()
   const { notifications } = useNotifications()
+  const { colorMode } = useColorMode()
+  const [isLargerThan640px] = useMediaQuery('(min-width: 640px)')
 
   let blockieImageSrc
   if (typeof window !== 'undefined') {
     blockieImageSrc = blockies.create({ seed: account }).toDataURL()
+  }
+
+  const logoSource = {
+    light: 'images/logo-poster.png',
+    dark: 'images/logo-poster-dark.jpg',
   }
 
   return (
@@ -77,13 +88,16 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
             justifyContent="space-between"
             py="8"
           >
-            <Box d="flex" alignItems="baseline">
-              <Heading as="h1" m="auto">
-                Poster
+            <Box d="flex" alignItems="center">
+              <Heading as="h1">
+                <Image
+                  maxWidth="100px"
+                  src={logoSource[colorMode]}
+                  alt="Poster"
+                />
               </Heading>
-              <Text ml="5" fontSize="lg">
-                A general purpose social media based on a ridiculously simple
-                smart contract
+              <Text fontSize="lg">
+                A general purpose decentralized social network.
               </Text>
             </Box>
             {account ? (
@@ -148,16 +162,46 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
       </main>
       <footer>
         <Container mt="8" py="8" maxWidth="container.xl">
-          <Text>
-            Built by{' '}
-            <Link href="https://twitter.com/auryn_macmillan">
-              Auryn Macmillan
-            </Link>{' '}
-            and{' '}
-            <Link href="https://twitter.com/jjperezaguinaga">
-              Jose Aguinaga
-            </Link>
-          </Text>
+          <SimpleGrid
+            columns={[1, 1, 1, 2]}
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Text>
+              Built by{' '}
+              <Link href="https://twitter.com/auryn_macmillan">
+                <Text display="inline" fontWeight="700">
+                  Auryn Macmillan
+                </Text>
+              </Link>{' '}
+              and{' '}
+              <Link href="https://twitter.com/jjperezaguinaga">
+                <Text display="inline" fontWeight="700">
+                  Jose Aguinaga
+                </Text>
+              </Link>
+              .
+            </Text>
+            <Flex
+              justifyContent="flex-end"
+              alignContent="center"
+              py="8"
+              flexFlow={isLargerThan640px ? 'row' : 'column'}
+            >
+              <Flex mr="8">
+                <Text>App</Text>
+                <Tag ml="5px">{POSTER_APP_VERSION}</Tag>
+              </Flex>
+              <Flex mr="8">
+                <Text>Contract</Text>
+                <Tag ml="5px">{POSTER_CONTRACT_VERSION}</Tag>
+              </Flex>
+              <Flex>
+                <Text>Subgraph</Text>
+                <Tag ml="5px">{POSTER_SUBGRAPH_ID}</Tag>
+              </Flex>
+            </Flex>
+          </SimpleGrid>
         </Container>
       </footer>
     </>

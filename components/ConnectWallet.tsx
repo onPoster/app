@@ -44,7 +44,7 @@ function ConnectWallet(): JSX.Element {
               rightIcon={
                 <Image
                   maxWidth="20px"
-                  src="/images/logo-metamask.png"
+                  src="images/logo-metamask.png"
                   alt="MetaMask"
                 />
               }
@@ -63,7 +63,7 @@ function ConnectWallet(): JSX.Element {
               rightIcon={
                 <Image
                   maxWidth="20px"
-                  src="/images/logo-walletconnect.svg"
+                  src="images/logo-walletconnect.svg"
                   alt="WalletConnect"
                 />
               }
