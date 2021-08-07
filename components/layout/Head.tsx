@@ -5,7 +5,7 @@ import React from 'react'
 /**
  * Constants & Helpers
  */
-export const WEBSITE_HOST_URL = 'https://nextjs-ethereum-starter.vercel.app/'
+export const WEBSITE_HOST_URL = 'https://poster-app.on.fleek.co/'
 
 /**
  * Prop Types
@@ -25,7 +25,7 @@ const Head = ({ customMeta }: { customMeta?: MetaProps }): JSX.Element => {
   const meta: MetaProps = {
     title: 'Poster',
     description: 'A general purpose social media based on a ridiculously simple smart contract.',
-    image: `${WEBSITE_HOST_URL}/images/site-preview.png`,
+    image: `${WEBSITE_HOST_URL}/images/site-preview.jpg`,
     type: 'website',
     ...customMeta,
   }
