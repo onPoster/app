@@ -1,43 +1,57 @@
 import { gql, useQuery } from '@apollo/client'
-import { Alert, AlertIcon, Box, Text } from '@chakra-ui/react'
+import { Alert, AlertIcon, Box, Skeleton, Text } from '@chakra-ui/react'
 import { ENS } from './ENS'
 
-const COMPOUND_MARKETS = gql`
+const GETALLPOSTS = gql`
   query GetAllPosts {
-    posts(first: 5, orderBy: id, orderDirection: desc) {
+    transactions(first: 5, orderBy: blockNumber, orderDirection: desc) {
       id
-      poster
-      type
-      content
+      timestamp
+      blockNumber
+      from {
+        id
+      }
+    }
+    accounts(first: 5, orderBy: id, orderDirection: desc) {
+      id
+      transactions {
+        id
+      }
+      posts {
+        id
+        rawContent
+      }
     }
   }
 `
 
 export const ViewGraph = (): JSX.Element => {
-  const { loading, error, data } = useQuery(COMPOUND_MARKETS)
+  const { loading, error, data } = useQuery(GETALLPOSTS)
+  const accounts = (data && data.accounts) || []
 
   return (
     <>
-      {loading && (
-        <Alert status="warning">
-          <AlertIcon />
-          ... Loading
-        </Alert>
-      )}
+      {loading && <Skeleton />}
       {error && (
         <Alert status="error">
           <AlertIcon />
           There was an error processing your request
         </Alert>
       )}
-      {!loading &&
-        !error &&
-        data.posts.map(({ id, poster, content }) => (
-          <Box key={id} mt="8">
-            <ENS address={poster} />
-            <Text>{content}</Text>
-          </Box>
-        ))}
+      {!loading && !error && accounts.length === 0 ? (
+        <Box mt="8">
+          <Text>No posts yet, be the first one!</Text>
+        </Box>
+      ) : (
+        accounts.map(({ id, posts }) => {
+          return posts.map((post) => (
+            <Box key={post.id} mt="8">
+              <ENS address={id} />
+              <Text>{post.rawContent}</Text>
+            </Box>
+          ))
+        })
+      )}
     </>
   )
 }

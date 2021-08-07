@@ -25,6 +25,7 @@ import { ViewGraph } from '../components/atoms/ViewGraph'
 
 import Layout from '../components/layout/Layout'
 import { initialState, reducer, setPostContent } from '../lib/reducers'
+import { POSTER_CONTRACT_ADDRESS } from '../lib/constants'
 
 /**
  * Constants & Helpers
@@ -34,8 +35,6 @@ const localProvider = new providers.StaticJsonRpcProvider(
   'http://localhost:8555'
 )
 
-// Single address across all networks due to Singleton Factory pattern
-const POSTER_CONTRACT_ADDRESS = '0xA0c7A49916Ce3ed7dd15871550212fcc7079AD61'
 const MAX_AMOUNT_OF_CHARACTERS = 300
 
 const bgColor = {
@@ -106,7 +105,7 @@ function HomeIndex(): JSX.Element {
                 type="text"
                 rows={10}
                 cols={10}
-                isDisabled={state.isLoading}
+                isDisabled={state.isLoading || !account}
                 wrap="soft"
                 maxLength={300}
                 style={{ overflow: 'hidden', resize: 'none' }}
@@ -133,6 +132,7 @@ function HomeIndex(): JSX.Element {
             <Button
               mt="2"
               colorScheme="teal"
+              isDisabled={!account}
               isLoading={state.isLoading}
               onClick={() =>
                 setPostContent(
@@ -143,7 +143,7 @@ function HomeIndex(): JSX.Element {
                 )
               }
             >
-              Post
+              { account ? 'Post' : 'Connect wallet to post' }
             </Button>
           </Box>
           {chainId === 31337 && (
