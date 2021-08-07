@@ -143,7 +143,7 @@ function HomeIndex(): JSX.Element {
                 )
               }
             >
-              { account ? 'Post' : 'Connect wallet to post' }
+              {account ? 'Post' : 'Connect wallet to post'}
             </Button>
           </Box>
           {chainId === 31337 && (
@@ -160,7 +160,11 @@ function HomeIndex(): JSX.Element {
           )}
         </Box>
         <Box p="5">
-          <ViewGraph />
+          <ViewGraph
+            getAllPostsNeedsReload={state.needsToReloadGetAllPosts}
+            isReloadIntervalLoading={state.isReloadIntervalLoading}
+            dispatch={dispatch}
+          />
         </Box>
       </SimpleGrid>
       <DarkModeSwitch />

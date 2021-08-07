@@ -6,3 +6,5 @@ export const POSTER_CONTRACT_ADDRESS = '0x0000000000A84Fe7f5d858c8A22121c975Ff0b
 // @TODO Fetch these values directly from package
 export const POSTER_CONTRACT_VERSION = 'v6'
 export const POSTER_APP_VERSION = '0.1.0'
+
+export const SUBGRAPH_RELOADING_TIME_IN_MS = 5000

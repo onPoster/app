@@ -1,5 +1,5 @@
 {
-  "name": "@poster/app",
+  "name": "@ethposter/app",
   "author": "@jjperezaguinaga",
   "license": "GPL-3.0+",
   "version": "0.1.0",
@@ -13,6 +13,9 @@
     "lint": "eslint . --ext ts --ext tsx --ext js",
     "test": "jest",
     "test-all": "yarn lint && yarn type-check && yarn test"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "husky": {
     "hooks": {
@@ -32,6 +35,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "Poster": "https://github.com/ETHPoster/contract.git#bf5a79e637226eb2b176c04813224a2413ff5213",
+    "@ethposter/subgraph": "https://github.com/jjperezaguinaga/subgraph.git",
     "@usedapp/core": "^0.4.1",
     "@web3-react/walletconnect-connector": "^6.2.0",
     "blockies-ts": "^1.0.0",
