@@ -10,11 +10,11 @@ import type { AppProps } from 'next/app'
 import React from 'react'
 import { useApollo } from '../lib/apolloClient'
 
-// scaffold-eth's INFURA_ID, SWAP IN YOURS FROM https://infura.io/dashboard/ethereum
-export const INFURA_ID = '460f40a260564ac4a4f4b3fffb032dad'
+export const INFURA_ID = 'b7f7038518824df4bf3011a0e94bc6a8'
 
 const config: Config = {
   readOnlyUrls: {
+    [ChainId.Goerli]: `https://goerli.infura.io/v3/${INFURA_ID}`,
     [ChainId.Hardhat]: 'http://localhost:8555',
     [ChainId.Localhost]: 'http://localhost:8545',
   },

@@ -23,7 +23,12 @@ import {
 import { useEthers, useNotifications } from '@usedapp/core'
 import blockies from 'blockies-ts'
 import React from 'react'
-import { POSTER_APP_VERSION, POSTER_CONTRACT_VERSION, POSTER_SUBGRAPH_ID } from '../../lib/constants'
+import {
+  POSTER_APP_VERSION,
+  POSTER_CONTRACT_ADDRESS,
+  POSTER_CONTRACT_VERSION,
+  POSTER_SUBGRAPH_ID,
+} from '../../lib/constants'
 import Balance from '../Balance'
 import ConnectWallet from '../ConnectWallet'
 import Head, { MetaProps } from './Head'
@@ -167,7 +172,7 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Text>
+            <Box>
               Built by{' '}
               <Link href="https://twitter.com/auryn_macmillan">
                 <Text display="inline" fontWeight="700">
@@ -181,23 +186,33 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
                 </Text>
               </Link>
               .
-            </Text>
+            </Box>
             <Flex
               justifyContent="flex-end"
               alignContent="center"
               py="8"
-              flexFlow={isLargerThan640px ? 'row' : 'column'}
+              flexFlow={isLargerThan640px ? 'column' : 'row'}
             >
               <Flex mr="8">
                 <Text>App</Text>
                 <Tag ml="5px">{POSTER_APP_VERSION}</Tag>
               </Flex>
               <Flex mr="8">
-                <Text>Contract</Text>
+                <Link
+                  href={`https://blockscan.com/address/${POSTER_CONTRACT_ADDRESS}`}
+                  isExternal
+                >
+                  <Text>Contract</Text>
+                </Link>
                 <Tag ml="5px">{POSTER_CONTRACT_VERSION}</Tag>
               </Flex>
               <Flex>
-                <Text>Subgraph</Text>
+                <Link
+                  href={`https://thegraph.com/legacy-explorer/subgraph/${POSTER_SUBGRAPH_ID}`}
+                  isExternal
+                >
+                  <Text>Subgraph</Text>
+                </Link>
                 <Tag ml="5px">{POSTER_SUBGRAPH_ID}</Tag>
               </Flex>
             </Flex>
