@@ -18,7 +18,7 @@ import {
   Tag,
   Text,
   useColorMode,
-  useMediaQuery,
+  useMediaQuery
 } from '@chakra-ui/react'
 import { useEthers, useNotifications } from '@usedapp/core'
 import blockies from 'blockies-ts'
@@ -27,7 +27,7 @@ import {
   POSTER_APP_VERSION,
   POSTER_CONTRACT_ADDRESS,
   POSTER_CONTRACT_VERSION,
-  POSTER_SUBGRAPH_ID,
+  POSTER_SUBGRAPH_ID
 } from '../../lib/constants'
 import Balance from '../Balance'
 import ConnectWallet from '../ConnectWallet'
@@ -47,7 +47,7 @@ declare global {
 // Title text for the various transaction notifications.
 const TRANSACTION_TITLES = {
   transactionStarted: 'Local Transaction Started',
-  transactionSucceed: 'Local Transaction Completed',
+  transactionSucceed: 'Local Transaction Completed'
 }
 
 // Takes a long hash string and truncates it.
@@ -79,7 +79,7 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
 
   const logoSource = {
     light: 'images/logo-poster.png',
-    dark: 'images/logo-poster-dark.jpg',
+    dark: 'images/logo-poster.png'
   }
 
   return (
@@ -137,7 +137,7 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
       <main>
         <Container maxWidth="container.xl">
           {children}
-          {notifications.map((notification) => {
+          {notifications.map(notification => {
             if (notification.type === 'walletConnected') {
               return null
             }
