@@ -12,13 +12,13 @@ import {
 } from '@chakra-ui/react'
 import {
   ChainId,
-  useBlockNumber,
   useEthers,
   useSendTransaction,
 } from '@usedapp/core'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { providers, utils } from 'ethers'
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useReducer } from 'react'
+
 import { DarkModeSwitch } from '../components/atoms/DarkModeSwitch'
 import { GitHubIcon } from '../components/atoms/GitHubIcon'
 import { ViewGraph } from '../components/atoms/ViewGraph'
@@ -47,8 +47,6 @@ function HomeIndex(): JSX.Element {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { account, chainId, library } = useEthers()
   const { colorMode } = useColorMode()
-  const block = useBlockNumber()
-  const [blockUpdates, setBlockUpdates] = useState<number>(0)
 
   const remainingCharacters = MAX_AMOUNT_OF_CHARACTERS - state.charactersAmount
 
@@ -66,10 +64,6 @@ function HomeIndex(): JSX.Element {
       value: utils.parseEther('0.1'),
     })
   }
-
-  useEffect(() => {
-    setBlockUpdates(blockUpdates + 1)
-  }, [block])
 
   return (
     <Layout>

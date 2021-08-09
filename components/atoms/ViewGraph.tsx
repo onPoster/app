@@ -8,11 +8,23 @@ import {
   Text,
   Flex,
 } from '@chakra-ui/react'
+import { useEthers } from '@usedapp/core'
 import { Dispatch, useEffect } from 'react'
+import { Poster as PosterType } from 'Poster/typechain/Poster'
+import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
 import { format } from 'timeago.js'
 import { GET_ALL_POSTS_IN_DESCENDING_ORDER } from '../../lib/queries'
 import { ActionType } from '../../lib/reducers'
 import { ENS } from './ENS'
+import {
+  DEFAULT_CHAIN_ID,
+  DEFAULT_NETWORK,
+  INFURA_CONFIGURATION,
+  JACK_CENSORSHIP_LIST,
+  POSTER_CONTRACT_ADDRESS,
+  SUBGRAPH_RELOADING_TIME_IN_MS,
+} from '../../lib/constants'
+import { Contract, ethers, getDefaultProvider } from 'ethers'
 
 export const ViewGraph = ({
   getAllPostsNeedsReload,
@@ -23,6 +35,7 @@ export const ViewGraph = ({
   isReloadIntervalLoading: boolean
   dispatch: Dispatch<ActionType>
 }): JSX.Element => {
+  const { chainId, library } = useEthers()
   const [getPosts, { loading, error, data }] = useLazyQuery(
     GET_ALL_POSTS_IN_DESCENDING_ORDER,
     {
@@ -37,9 +50,49 @@ export const ViewGraph = ({
         type: 'SET_SUBGRAPH_GETALLPOSTS_RELOAD',
         needsToReloadGetAllPosts: false,
       })
+      dispatch({
+        type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING',
+        isReloadIntervalLoading: false,
+      })
     }
     loadPosts()
-  }, [getAllPostsNeedsReload])
+    const defaultProvider =
+      library || getDefaultProvider(DEFAULT_NETWORK, INFURA_CONFIGURATION)
+    const defaultChainId = chainId || DEFAULT_CHAIN_ID
+
+    if (defaultProvider && defaultChainId !== undefined) {
+      let interval
+      const posterContract = new Contract(
+        POSTER_CONTRACT_ADDRESS,
+        Poster.abi,
+        defaultProvider
+      ) as unknown as PosterType
+
+      const delayedEventUpdate = () => {
+        dispatch({
+          type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING',
+          isReloadIntervalLoading: true,
+        })
+        // Ensuring we are debouncing loadPosts by SUBGRAPH_RELOADING_TIME_IN_MS
+        // even if we have multiple events coming at the same time.
+        if (!interval) {
+          setTimeout(loadPosts, SUBGRAPH_RELOADING_TIME_IN_MS)
+        }
+      }
+
+      const filter = {
+        address: POSTER_CONTRACT_ADDRESS,
+        topics: [ethers.utils.id('NewPost(address,string)')],
+      }
+
+      posterContract.on(filter, delayedEventUpdate)
+
+      return () => {
+        posterContract.removeListener(filter, delayedEventUpdate)
+        clearTimeout(interval)
+      }
+    }
+  }, [getAllPostsNeedsReload, library, chainId])
 
   // @TODO Add actual accounts & transactions types
   const transactions = (data && data.transactions) || []
@@ -64,17 +117,21 @@ export const ViewGraph = ({
           <Text>No posts yet, be the first one!</Text>
         </Box>
       ) : (
-        transactions.map(({ from, posts, timestamp }) => {
-          return posts.map((post) => (
-            <Box key={post.id} mt="8">
-              <Flex alignItems="baseline">
-                <ENS props={{mr:"1"}} address={from.id} />·
-                <Text ml="1" fontSize="sm">{format(timestamp * 1000)}</Text>
-              </Flex>
-              <Text>{post.rawContent}</Text>
-            </Box>
-          ))
-        })
+        transactions
+          .filter(({ from }) => !JACK_CENSORSHIP_LIST.includes(from.id)) // can't have a social network w/o censorship
+          .map(({ from, posts, timestamp }) => {
+            return posts.map((post) => (
+              <Box key={post.id} mt="8">
+                <Flex alignItems="baseline">
+                  <ENS props={{ mr: '1' }} address={from.id} />·
+                  <Text ml="1" fontSize="sm">
+                    {format(timestamp * 1000)}
+                  </Text>
+                </Flex>
+                <Text>{post.rawContent}</Text>
+              </Box>
+            ))
+          })
       )}
     </>
   )
