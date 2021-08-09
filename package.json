@@ -34,10 +34,10 @@
     "@chakra-ui/react": "^1.6.3",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "Poster": "https://github.com/ETHPoster/contract.git#bf5a79e637226eb2b176c04813224a2413ff5213",
     "@ethposter/subgraph": "https://github.com/jjperezaguinaga/subgraph.git",
     "@usedapp/core": "^0.4.1",
     "@web3-react/walletconnect-connector": "^6.2.0",
+    "Poster": "https://github.com/ETHPoster/contract.git#bf5a79e637226eb2b176c04813224a2413ff5213",
     "blockies-ts": "^1.0.0",
     "deepmerge": "^4.2.2",
     "ethers": "^5.0.32",
@@ -47,7 +47,8 @@
     "next": "^11.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-icons": "^4.2.0"
+    "react-icons": "^4.2.0",
+    "timeago.js": "^4.0.2"
   },
   "devDependencies": {
     "@testing-library/react": "^11.2.5",

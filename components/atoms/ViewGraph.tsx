@@ -9,6 +9,7 @@ import {
   Flex,
 } from '@chakra-ui/react'
 import { Dispatch, useEffect } from 'react'
+import { format } from 'timeago.js'
 import { GET_ALL_POSTS_IN_DESCENDING_ORDER } from '../../lib/queries'
 import { ActionType } from '../../lib/reducers'
 import { ENS } from './ENS'
@@ -22,9 +23,12 @@ export const ViewGraph = ({
   isReloadIntervalLoading: boolean
   dispatch: Dispatch<ActionType>
 }): JSX.Element => {
-  const [getPosts, { loading, error, data }] = useLazyQuery(GET_ALL_POSTS_IN_DESCENDING_ORDER, {
-    fetchPolicy: "network-only"
-  })
+  const [getPosts, { loading, error, data }] = useLazyQuery(
+    GET_ALL_POSTS_IN_DESCENDING_ORDER,
+    {
+      fetchPolicy: 'network-only',
+    }
+  )
 
   useEffect(() => {
     const loadPosts = () => {
@@ -60,10 +64,13 @@ export const ViewGraph = ({
           <Text>No posts yet, be the first one!</Text>
         </Box>
       ) : (
-        transactions.map(({ from, posts }) => {
+        transactions.map(({ from, posts, timestamp }) => {
           return posts.map((post) => (
             <Box key={post.id} mt="8">
-              <ENS address={from.id} />
+              <Flex alignItems="baseline">
+                <ENS props={{mr:"1"}} address={from.id} />·
+                <Text ml="1" fontSize="sm">{format(timestamp * 1000)}</Text>
+              </Flex>
               <Text>{post.rawContent}</Text>
             </Box>
           ))

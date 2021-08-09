@@ -1,8 +1,8 @@
-import { Text } from '@chakra-ui/react'
+import { Text, TextProps } from '@chakra-ui/react'
 import { useEthers } from '@usedapp/core'
 import { useEffect, useState } from 'react'
 
-export const ENS = ({ address }: { address: string }): JSX.Element => {
+export const ENS = ({ address, props }: { address: string, props: TextProps }): JSX.Element => {
   const { library } = useEthers()
   const [ens, setEns] = useState<string | null>()
 
@@ -23,5 +23,5 @@ export const ENS = ({ address }: { address: string }): JSX.Element => {
     }
   }, [address, library])
 
-  return <Text fontFamily="mono">{ens || address}</Text>
+  return <Text fontFamily="mono" {...props}>{ens || address}</Text>
 }
