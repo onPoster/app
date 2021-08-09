@@ -20,6 +20,7 @@ import {
   DEFAULT_CHAIN_ID,
   DEFAULT_NETWORK,
   INFURA_CONFIGURATION,
+  JACK_CENSORSHIP_LIST,
   POSTER_CONTRACT_ADDRESS,
   SUBGRAPH_RELOADING_TIME_IN_MS,
 } from '../../lib/constants'
@@ -51,7 +52,7 @@ export const ViewGraph = ({
       })
       dispatch({
         type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING',
-        isReloadIntervalLoading: false
+        isReloadIntervalLoading: false,
       })
     }
     loadPosts()
@@ -60,7 +61,7 @@ export const ViewGraph = ({
     const defaultChainId = chainId || DEFAULT_CHAIN_ID
 
     if (defaultProvider && defaultChainId !== undefined) {
-      let interval;
+      let interval
       const posterContract = new Contract(
         POSTER_CONTRACT_ADDRESS,
         Poster.abi,
@@ -70,7 +71,7 @@ export const ViewGraph = ({
       const delayedEventUpdate = () => {
         dispatch({
           type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING',
-          isReloadIntervalLoading: true
+          isReloadIntervalLoading: true,
         })
         // Ensuring we are debouncing loadPosts by SUBGRAPH_RELOADING_TIME_IN_MS
         // even if we have multiple events coming at the same time.
@@ -116,19 +117,21 @@ export const ViewGraph = ({
           <Text>No posts yet, be the first one!</Text>
         </Box>
       ) : (
-        transactions.map(({ from, posts, timestamp }) => {
-          return posts.map((post) => (
-            <Box key={post.id} mt="8">
-              <Flex alignItems="baseline">
-                <ENS props={{ mr: '1' }} address={from.id} />·
-                <Text ml="1" fontSize="sm">
-                  {format(timestamp * 1000)}
-                </Text>
-              </Flex>
-              <Text>{post.rawContent}</Text>
-            </Box>
-          ))
-        })
+        transactions
+          .filter(({ from }) => !JACK_CENSORSHIP_LIST.includes(from.id)) // can't have a social network w/o censorship
+          .map(({ from, posts, timestamp }) => {
+            return posts.map((post) => (
+              <Box key={post.id} mt="8">
+                <Flex alignItems="baseline">
+                  <ENS props={{ mr: '1' }} address={from.id} />·
+                  <Text ml="1" fontSize="sm">
+                    {format(timestamp * 1000)}
+                  </Text>
+                </Flex>
+                <Text>{post.rawContent}</Text>
+              </Box>
+            ))
+          })
       )}
     </>
   )
