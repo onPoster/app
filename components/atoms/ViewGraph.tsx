@@ -9,7 +9,7 @@ import {
   Flex,
 } from '@chakra-ui/react'
 import { Dispatch, useEffect } from 'react'
-import { GETALLPOSTS } from '../../lib/queries'
+import { GET_ALL_POSTS_IN_DESCENDING_ORDER } from '../../lib/queries'
 import { ActionType } from '../../lib/reducers'
 import { ENS } from './ENS'
 
@@ -22,7 +22,7 @@ export const ViewGraph = ({
   isReloadIntervalLoading: boolean
   dispatch: Dispatch<ActionType>
 }): JSX.Element => {
-  const [getPosts, { loading, error, data }] = useLazyQuery(GETALLPOSTS, {
+  const [getPosts, { loading, error, data }] = useLazyQuery(GET_ALL_POSTS_IN_DESCENDING_ORDER, {
     fetchPolicy: "network-only"
   })
 
@@ -38,7 +38,7 @@ export const ViewGraph = ({
   }, [getAllPostsNeedsReload])
 
   // @TODO Add actual accounts & transactions types
-  const accounts = (data && data.accounts) || []
+  const transactions = (data && data.transactions) || []
 
   return (
     <>
@@ -55,15 +55,15 @@ export const ViewGraph = ({
           There was an error processing your request
         </Alert>
       )}
-      {!loading && !error && accounts.length === 0 ? (
+      {!loading && !error && transactions.length === 0 ? (
         <Box mt="8">
           <Text>No posts yet, be the first one!</Text>
         </Box>
       ) : (
-        accounts.map(({ id, posts }) => {
+        transactions.map(({ from, posts }) => {
           return posts.map((post) => (
             <Box key={post.id} mt="8">
-              <ENS address={id} />
+              <ENS address={from.id} />
               <Text>{post.rawContent}</Text>
             </Box>
           ))
