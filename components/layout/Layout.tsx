@@ -190,8 +190,7 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
             <Flex
               justifyContent="flex-end"
               alignContent="center"
-              pt="8"
-              flexFlow={isLargerThan640px ? 'column' : 'row'}
+              flexFlow={isLargerThan640px ? 'row' : 'column'}
             >
               <Flex mr="8">
                 <Text>App</Text>

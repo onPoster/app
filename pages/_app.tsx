@@ -9,8 +9,7 @@ import {
 import type { AppProps } from 'next/app'
 import React from 'react'
 import { useApollo } from '../lib/apolloClient'
-
-export const INFURA_ID = 'b7f7038518824df4bf3011a0e94bc6a8'
+import { INFURA_ID } from '../lib/constants'
 
 const config: Config = {
   readOnlyUrls: {

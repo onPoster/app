@@ -121,10 +121,6 @@ export async function setPostContent(
         type: 'SET_SUBGRAPH_GETALLPOSTS_RELOAD',
         needsToReloadGetAllPosts: true,
       })
-      dispatch({
-        type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING',
-        isReloadIntervalLoading: false
-      })
     }, SUBGRAPH_RELOADING_TIME_IN_MS)
   }
 }
