@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
-export const GETALLPOSTS = gql`
-  query GetAllPosts {
+export const GET_ALL_POSTS_IN_DESCENDING_ORDER = gql`
+  query getAllPostsInDescendingOrder {
     transactions(first: 10, orderBy: blockNumber, orderDirection: desc) {
       id
       timestamp
@@ -9,13 +9,7 @@ export const GETALLPOSTS = gql`
       from {
         id
       }
-    }
-    accounts(first: 10, orderBy: id, orderDirection: desc) {
-      id
-      transactions {
-        id
-      }
-      posts {
+    	posts {
         id
         rawContent
       }

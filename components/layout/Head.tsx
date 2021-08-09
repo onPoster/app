@@ -24,7 +24,7 @@ const Head = ({ customMeta }: { customMeta?: MetaProps }): JSX.Element => {
   const router = useRouter()
   const meta: MetaProps = {
     title: 'Poster',
-    description: 'A general purpose social media based on a ridiculously simple smart contract.',
+    description: 'A general purpose decentralized social network.',
     image: `${WEBSITE_HOST_URL}/images/site-preview.jpg`,
     type: 'website',
     ...customMeta,
