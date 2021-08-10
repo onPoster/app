@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
 import { Poster as PosterType } from 'Poster/typechain/Poster'
 import { SUBGRAPH_RELOADING_TIME_IN_MS } from './constants'
+import PosterSchema from './schema'
 
 /**
  * Prop Types
@@ -98,7 +99,7 @@ export async function setPostContent(
       Poster.abi,
       signer
     ) as unknown as PosterType
-    const transaction = await contract.post(state.inputValue)
+    const transaction = await contract.post(PosterSchema.createNewPost(state.inputValue))
     await transaction.wait()
     dispatch({
       type: 'SET_LOADING',

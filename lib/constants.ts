@@ -17,4 +17,4 @@ export const DEFAULT_CHAIN_ID = ChainId.Goerli
 export const DEFAULT_NETWORK = ethers.providers.getNetwork(DEFAULT_CHAIN_ID)
 export const INFURA_CONFIGURATION = { infura: INFURA_ID }
 
-export const JACK_CENSORSHIP_LIST = ['0x900d8f9796cdfb3da852e061985b1ad564199bd8']
+export const JACK_CENSORSHIP_LIST = process.env.NODE_ENV === 'production' ? ['0x900d8f9796cdfb3da852e061985b1ad564199bd8'] : []
