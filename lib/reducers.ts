@@ -34,9 +34,9 @@ export type ActionType =
   }
   | {
     type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING'
-    isReloadIntervalLoading:  StateType['isReloadIntervalLoading']
+    isReloadIntervalLoading: StateType['isReloadIntervalLoading']
   }
-  
+
 
 /**
  * Component
@@ -89,39 +89,46 @@ export async function setPostContent(
 ): Promise<void> {
   if (!state.inputValue) return
   if (provider) {
-    dispatch({
-      type: 'SET_LOADING',
-      isLoading: true,
-    })
-    const signer = provider.getSigner()
-    const contract = new ethers.Contract(
-      PosterContractAddress,
-      Poster.abi,
-      signer
-    ) as unknown as PosterType
-    const transaction = await contract.post(PosterSchema.createNewPost(state.inputValue))
-    await transaction.wait()
-    dispatch({
-      type: 'SET_LOADING',
-      isLoading: false,
-    })
-    dispatch({
-      type: 'SET_INPUT_VALUE',
-      inputValue: ''
-    })
-    dispatch({
-      type: 'SET_CHARACTERS_AMOUNT',
-      charactersAmount: 0
-    })
-    dispatch({
-      type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING',
-      isReloadIntervalLoading: true
-    })
-    setTimeout(() => {
+    try {
       dispatch({
-        type: 'SET_SUBGRAPH_GETALLPOSTS_RELOAD',
-        needsToReloadGetAllPosts: true,
+        type: 'SET_LOADING',
+        isLoading: true,
       })
-    }, SUBGRAPH_RELOADING_TIME_IN_MS)
+      const signer = provider.getSigner()
+      const contract = new ethers.Contract(
+        PosterContractAddress,
+        Poster.abi,
+        signer
+      ) as unknown as PosterType
+      const transaction = await contract.post(PosterSchema.createNewPost(state.inputValue))
+      await transaction.wait()
+      dispatch({
+        type: 'SET_LOADING',
+        isLoading: false,
+      })
+      dispatch({
+        type: 'SET_INPUT_VALUE',
+        inputValue: ''
+      })
+      dispatch({
+        type: 'SET_CHARACTERS_AMOUNT',
+        charactersAmount: 0
+      })
+      dispatch({
+        type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING',
+        isReloadIntervalLoading: true
+      })
+      setTimeout(() => {
+        dispatch({
+          type: 'SET_SUBGRAPH_GETALLPOSTS_RELOAD',
+          needsToReloadGetAllPosts: true,
+        })
+      }, SUBGRAPH_RELOADING_TIME_IN_MS)
+    } catch (e) {
+      dispatch({
+        type: 'SET_LOADING',
+        isLoading: false,
+      })
+    }
   }
 }
