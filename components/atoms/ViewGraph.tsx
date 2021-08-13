@@ -6,6 +6,7 @@ import {
   Skeleton,
   Spinner,
   Text,
+  Tag,
   Flex,
 } from '@chakra-ui/react'
 import { useEthers } from '@usedapp/core'
@@ -97,6 +98,11 @@ export const ViewGraph = ({
   // @TODO Add actual accounts & transactions types
   const transactions = (data && data.transactions) || []
 
+  const colorScheme = {
+    invalid: 'gray',
+    microblog: 'green',
+  }
+
   return (
     <>
       {isReloadIntervalLoading && (
@@ -124,11 +130,23 @@ export const ViewGraph = ({
               <Box key={post.id} mt="8">
                 <Flex alignItems="baseline">
                   <ENS props={{ mr: '1' }} address={from.id} />·
-                  <Text ml="1" fontSize="sm">
+                  <Text mx="1" fontSize="sm">
                     {format(timestamp * 1000)}
                   </Text>
+                  ·
+                  <Tag
+                    ml="1"
+                    size="sm"
+                    colorScheme={colorScheme[post.action.type]}
+                  >
+                    {post.action.type}
+                  </Tag>
                 </Flex>
-                <Text>{post.rawContent}</Text>
+                {post.action.text ? (
+                  <Text>{post.action.text}</Text>
+                ) : (
+                  <Text>{post.rawContent}</Text>
+                )}
               </Box>
             ))
           })
