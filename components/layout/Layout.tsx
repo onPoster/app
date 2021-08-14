@@ -24,6 +24,7 @@ import { getChainName, useEthers, useNotifications } from '@usedapp/core'
 import blockies from 'blockies-ts'
 import React from 'react'
 import {
+  DEFAULT_CHAIN_ID,
   POSTER_APP_VERSION,
   POSTER_CONTRACT_ADDRESS,
   POSTER_CONTRACT_VERSION,
@@ -206,12 +207,12 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
               </Flex>
               <Flex>
                 <Link
-                  href={`https://thegraph.com/legacy-explorer/subgraph/jjperezaguinaga/poster-${getChainName(chainId).toLowerCase()}`}
+                  href={`https://thegraph.com/legacy-explorer/subgraph/jjperezaguinaga/poster-${getChainName(chainId || DEFAULT_CHAIN_ID).toLowerCase()}`}
                   isExternal
                 >
                   <Text>Subgraph</Text>
                 </Link>
-                <Tag ml="5px">poster-{getChainName(chainId).toLowerCase()}</Tag>
+                <Tag ml="5px">poster-{getChainName(chainId || DEFAULT_CHAIN_ID).toLowerCase()}</Tag>
               </Flex>
             </Flex>
           </SimpleGrid>
