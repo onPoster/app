@@ -7,11 +7,13 @@ import {
   Spinner,
   Text,
   Flex,
+  Link,
 } from '@chakra-ui/react'
-import { useEthers } from '@usedapp/core'
+import { getExplorerTransactionLink, useEthers } from '@usedapp/core'
 import { Dispatch, useEffect } from 'react'
 import { Poster as PosterType } from 'Poster/typechain/Poster'
 import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
+import { Action } from '@ethposter/subgraph/generated/schema'
 import { format } from 'timeago.js'
 import { GET_ALL_POSTS_IN_DESCENDING_ORDER } from '../../lib/queries'
 import { ActionType } from '../../lib/reducers'
@@ -98,6 +100,15 @@ export const ViewGraph = ({
   // @TODO Add actual accounts & transactions types
   const transactions = (data && data.transactions) || []
 
+  const tryClientSideJSONParsing = (rawContent): string => {
+    try {
+      const action: Action = JSON.parse(rawContent)
+      return action.text
+    } catch {
+      return rawContent
+    }
+  }
+
   return (
     <>
       {isReloadIntervalLoading && (
@@ -120,21 +131,23 @@ export const ViewGraph = ({
       ) : (
         transactions
           .filter(({ from }) => !JACK_CENSORSHIP_LIST.includes(from.id)) // can't have a social network w/o censorship
-          .map(({ from, posts, timestamp }) => {
+          .map(({ id, from, posts, timestamp }) => {
             return posts.map((post) => (
               <Box key={post.id} mt="8">
                 <Flex alignItems="baseline">
                   <Flex>
                     <ENS props={{ mr: '1' }} address={from.id} />·
-                    <Text mx="1" fontSize="sm" minW="120px">
-                      {format(timestamp * 1000)}
-                    </Text>
+                    <Link isExternal href={`${getExplorerTransactionLink(id, chainId)}`}>
+                      <Text mx="1" fontSize="sm" minW="120px">
+                        {format(timestamp * 1000)}
+                      </Text>
+                    </Link>
                   </Flex>
                 </Flex>
                 {post.action.text ? (
                   <Text>{post.action.text}</Text>
                 ) : (
-                  <Text>{post.rawContent}</Text>
+                  <Text>{tryClientSideJSONParsing(post.rawContent)}</Text>
                 )}
               </Box>
             ))

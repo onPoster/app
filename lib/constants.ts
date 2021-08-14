@@ -1,8 +1,6 @@
 import { ChainId } from "@usedapp/core"
 
-export const POSTER_SUBGRAPH_ID = 'jjperezaguinaga/poster-crt'
-export const POSTER_SUBGRAPH_URL_GOERLI = `https://api.thegraph.com/subgraphs/name/${POSTER_SUBGRAPH_ID}`
-// @TODO Streamline the subgraph urls
+export const POSTER_SUBGRAPH_URL_GOERLI = `https://api.thegraph.com/subgraphs/name/jjperezaguinaga/poster-goerli`
 export const POSTER_SUBGRAPH_URL_POLYGON = 'https://api.thegraph.com/subgraphs/name/jjperezaguinaga/poster-polygon'
 
 export const POSTER_CONTRACT_ADDRESS = '0x0000000000A84Fe7f5d858c8A22121c975Ff0b42'
