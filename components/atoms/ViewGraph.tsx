@@ -13,7 +13,6 @@ import { getExplorerTransactionLink, useEthers } from '@usedapp/core'
 import { Dispatch, useEffect } from 'react'
 import { Poster as PosterType } from 'Poster/typechain/Poster'
 import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
-import { Action } from '@ethposter/subgraph/generated/schema'
 import { format } from 'timeago.js'
 import { GET_ALL_POSTS_IN_DESCENDING_ORDER } from '../../lib/queries'
 import { ActionType } from '../../lib/reducers'
@@ -102,7 +101,8 @@ export const ViewGraph = ({
 
   const tryClientSideJSONParsing = (rawContent): string => {
     try {
-      const action: Action = JSON.parse(rawContent)
+      // NB: Trying to import generated schema (assembly script) to typescript will fail.
+      const action: { text: string } = JSON.parse(rawContent)
       return action.text
     } catch {
       return rawContent
