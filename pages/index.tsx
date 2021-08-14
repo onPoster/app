@@ -10,14 +10,12 @@ import {
   SimpleGrid,
   Link,
 } from '@chakra-ui/react'
-import {
-  ChainId,
-  useEthers,
-  useSendTransaction,
-} from '@usedapp/core'
+import { ApolloProvider } from '@apollo/client'
+import { getApollo } from '../lib/apolloClient'
+import { ChainId, useEthers, useSendTransaction } from '@usedapp/core'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { providers, utils } from 'ethers'
-import React, { useReducer } from 'react'
+import React, { useReducer, useState } from 'react'
 
 import { DarkModeSwitch } from '../components/atoms/DarkModeSwitch'
 import { GitHubIcon } from '../components/atoms/GitHubIcon'
@@ -25,7 +23,13 @@ import { ViewGraph } from '../components/atoms/ViewGraph'
 
 import Layout from '../components/layout/Layout'
 import { initialState, reducer, setPostContent } from '../lib/reducers'
-import { POSTER_CONTRACT_ADDRESS } from '../lib/constants'
+import {
+  DEFAULT_CHAIN_ID,
+  POSTER_CONTRACT_ADDRESS,
+  POSTER_SUBGRAPH_URL_GOERLI,
+  POSTER_SUBGRAPH_URL_POLYGON,
+} from '../lib/constants'
+import { useEffect } from 'react'
 
 /**
  * Constants & Helpers
@@ -46,6 +50,22 @@ const color = { light: '#414141', dark: 'white' }
 function HomeIndex(): JSX.Element {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { account, chainId, library } = useEthers()
+  const [apolloClient, setApolloClient] = useState()
+
+  const subgraphURLsPerNetwork = {
+    [ChainId.Goerli]: POSTER_SUBGRAPH_URL_GOERLI,
+    [ChainId.Polygon]: POSTER_SUBGRAPH_URL_POLYGON
+  }
+
+  useEffect(() => {
+    const subgraphURL = subgraphURLsPerNetwork[chainId ? chainId : DEFAULT_CHAIN_ID]
+    const apolloClient = getApollo(subgraphURL)
+    setApolloClient(apolloClient)
+    return(() => {
+      setApolloClient(null)
+    })
+  }, [chainId])
+
   const { colorMode } = useColorMode()
 
   const remainingCharacters = MAX_AMOUNT_OF_CHARACTERS - state.charactersAmount
@@ -65,12 +85,18 @@ function HomeIndex(): JSX.Element {
     })
   }
 
+  const colorScheme = {
+    online: 'green',
+    offline: 'gray',
+  }
+
   return (
     <Layout>
       <Box d="flex" justifyContent="space-between">
         <Box d="flex">
           <Text>Networks Available</Text>
-          <Tag ml="2">Goerli</Tag>
+          <Tag ml="2" colorScheme={colorScheme[chainId === 5 ? 'online' : 'offline']}>Goerli</Tag>
+          <Tag ml="2" colorScheme={colorScheme[chainId === 137 ? 'online' : 'offline']}>Polygon</Tag>
         </Box>
         <Box d="flex" alignItems="center">
           <GitHubIcon />
@@ -154,11 +180,15 @@ function HomeIndex(): JSX.Element {
           )}
         </Box>
         <Box p="5">
-          <ViewGraph
-            getAllPostsNeedsReload={state.needsToReloadGetAllPosts}
-            isReloadIntervalLoading={state.isReloadIntervalLoading}
-            dispatch={dispatch}
-          />
+          {apolloClient && (
+            <ApolloProvider client={apolloClient}>
+              <ViewGraph
+                getAllPostsNeedsReload={state.needsToReloadGetAllPosts}
+                isReloadIntervalLoading={state.isReloadIntervalLoading}
+                dispatch={dispatch}
+              />
+            </ApolloProvider>
+          )}
         </Box>
       </SimpleGrid>
       <DarkModeSwitch />

@@ -1,37 +1,28 @@
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client'
-import { concatPagination } from '@apollo/client/utilities'
 import merge from 'deepmerge'
 import isEqual from 'lodash/isEqual'
-import { useMemo } from 'react'
-import { POSTER_SUBGRAPH_URL } from './constants'
 
 export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__'
 
-let apolloClient
+let apolloClient = {}
 
-function createApolloClient() {
+function createApolloClient(uri) {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: new HttpLink({
       // Server URL (must be absolute)
-      uri: POSTER_SUBGRAPH_URL,
+      uri,
       // Additional fetch() options like `credentials` or `headers`
       credentials: 'same-origin',
     }),
     cache: new InMemoryCache({
-      typePolicies: {
-        Query: {
-          fields: {
-            allPosts: concatPagination(),
-          },
-        },
-      },
+      
     }),
   })
 }
 
-export function initializeApollo(initialState = null) {
-  const _apolloClient = apolloClient ?? createApolloClient()
+export function initializeApollo(initialState = null, uri) {
+  const _apolloClient = apolloClient[uri] ?? createApolloClient(uri)
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
   // gets hydrated here
@@ -69,8 +60,7 @@ export function addApolloState(client, pageProps) {
   return pageProps
 }
 
-export function useApollo(pageProps) {
-  const state = pageProps[APOLLO_STATE_PROP_NAME]
-  const store = useMemo(() => initializeApollo(state), [state])
+export function getApollo(uri) {
+  const store = initializeApollo(null, uri);
   return store
 }
