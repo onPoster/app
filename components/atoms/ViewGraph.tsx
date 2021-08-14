@@ -6,7 +6,6 @@ import {
   Skeleton,
   Spinner,
   Text,
-  Tag,
   Flex,
 } from '@chakra-ui/react'
 import { useEthers } from '@usedapp/core'
@@ -41,6 +40,7 @@ export const ViewGraph = ({
     GET_ALL_POSTS_IN_DESCENDING_ORDER,
     {
       fetchPolicy: 'network-only',
+      nextFetchPolicy: 'network-only',
     }
   )
 
@@ -93,15 +93,10 @@ export const ViewGraph = ({
         clearTimeout(interval)
       }
     }
-  }, [getAllPostsNeedsReload, library, chainId])
+  }, [getAllPostsNeedsReload, library])
 
   // @TODO Add actual accounts & transactions types
   const transactions = (data && data.transactions) || []
-
-  const colorScheme = {
-    invalid: 'gray',
-    microblog: 'green',
-  }
 
   return (
     <>
@@ -129,18 +124,12 @@ export const ViewGraph = ({
             return posts.map((post) => (
               <Box key={post.id} mt="8">
                 <Flex alignItems="baseline">
-                  <ENS props={{ mr: '1' }} address={from.id} />·
-                  <Text mx="1" fontSize="sm">
-                    {format(timestamp * 1000)}
-                  </Text>
-                  ·
-                  <Tag
-                    ml="1"
-                    size="sm"
-                    colorScheme={colorScheme[post.action.type]}
-                  >
-                    {post.action.type}
-                  </Tag>
+                  <Flex>
+                    <ENS props={{ mr: '1' }} address={from.id} />·
+                    <Text mx="1" fontSize="sm" minW="120px">
+                      {format(timestamp * 1000)}
+                    </Text>
+                  </Flex>
                 </Flex>
                 {post.action.text ? (
                   <Text>{post.action.text}</Text>

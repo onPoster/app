@@ -20,6 +20,7 @@ export const ENS = ({ address, props }: { address: string, props: TextProps }): 
     }
     return () => {
       mounted = false
+      setEns(null)
     }
   }, [address, library])
 
