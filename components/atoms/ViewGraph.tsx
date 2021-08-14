@@ -137,7 +137,7 @@ export const ViewGraph = ({
                 <Flex alignItems="baseline">
                   <Flex>
                     <ENS props={{ mr: '1' }} address={from.id} />·
-                    <Link isExternal href={`${getExplorerTransactionLink(id, chainId)}`}>
+                    <Link isExternal href={`${getExplorerTransactionLink(id, chainId || DEFAULT_CHAIN_ID)}`}>
                       <Text mx="1" fontSize="sm" minW="120px">
                         {format(timestamp * 1000)}
                       </Text>
