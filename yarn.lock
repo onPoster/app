@@ -1609,9 +1609,9 @@
     "@ethersproject/properties" "^5.4.0"
     "@ethersproject/strings" "^5.4.0"
 
-"@ethposter/subgraph@https://github.com/jjperezaguinaga/subgraph.git":
+"@ethposter/subgraph@https://github.com/jjperezaguinaga/subgraph.git#301dde096453a337a37fc8ce4a9debf811c52b0a":
   version "0.1.0"
-  resolved "https://github.com/jjperezaguinaga/subgraph.git#e82e50948303ef84f934eece6d15cdb1013fb357"
+  resolved "https://github.com/jjperezaguinaga/subgraph.git#301dde096453a337a37fc8ce4a9debf811c52b0a"
   dependencies:
     "@graphprotocol/graph-cli" "0.21.1"
     "@graphprotocol/graph-ts" "0.20.0"

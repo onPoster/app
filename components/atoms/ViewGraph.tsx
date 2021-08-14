@@ -7,8 +7,9 @@ import {
   Spinner,
   Text,
   Flex,
+  Link,
 } from '@chakra-ui/react'
-import { useEthers } from '@usedapp/core'
+import { getExplorerTransactionLink, useEthers } from '@usedapp/core'
 import { Dispatch, useEffect } from 'react'
 import { Poster as PosterType } from 'Poster/typechain/Poster'
 import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
@@ -98,6 +99,16 @@ export const ViewGraph = ({
   // @TODO Add actual accounts & transactions types
   const transactions = (data && data.transactions) || []
 
+  const tryClientSideJSONParsing = (rawContent): string => {
+    try {
+      // NB: Trying to import generated schema (assembly script) to typescript will fail.
+      const action: { text: string } = JSON.parse(rawContent)
+      return action.text
+    } catch {
+      return rawContent
+    }
+  }
+
   return (
     <>
       {isReloadIntervalLoading && (
@@ -120,21 +131,23 @@ export const ViewGraph = ({
       ) : (
         transactions
           .filter(({ from }) => !JACK_CENSORSHIP_LIST.includes(from.id)) // can't have a social network w/o censorship
-          .map(({ from, posts, timestamp }) => {
+          .map(({ id, from, posts, timestamp }) => {
             return posts.map((post) => (
               <Box key={post.id} mt="8">
                 <Flex alignItems="baseline">
                   <Flex>
                     <ENS props={{ mr: '1' }} address={from.id} />·
-                    <Text mx="1" fontSize="sm" minW="120px">
-                      {format(timestamp * 1000)}
-                    </Text>
+                    <Link isExternal href={`${getExplorerTransactionLink(id, chainId || DEFAULT_CHAIN_ID)}`}>
+                      <Text mx="1" fontSize="sm" minW="120px">
+                        {format(timestamp * 1000)}
+                      </Text>
+                    </Link>
                   </Flex>
                 </Flex>
                 {post.action.text ? (
                   <Text>{post.action.text}</Text>
                 ) : (
-                  <Text>{post.rawContent}</Text>
+                  <Text>{tryClientSideJSONParsing(post.rawContent)}</Text>
                 )}
               </Box>
             ))

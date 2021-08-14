@@ -34,7 +34,7 @@
     "@chakra-ui/react": "^1.6.3",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "@ethposter/subgraph": "https://github.com/jjperezaguinaga/subgraph.git",
+    "@ethposter/subgraph": "https://github.com/jjperezaguinaga/subgraph.git#301dde096453a337a37fc8ce4a9debf811c52b0a",
     "@usedapp/core": "^0.4.1",
     "@web3-react/walletconnect-connector": "^6.2.0",
     "Poster": "https://github.com/ETHPoster/contract.git#bf5a79e637226eb2b176c04813224a2413ff5213",

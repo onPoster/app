@@ -20,14 +20,14 @@ import {
   useColorMode,
   useMediaQuery
 } from '@chakra-ui/react'
-import { useEthers, useNotifications } from '@usedapp/core'
+import { getChainName, useEthers, useNotifications } from '@usedapp/core'
 import blockies from 'blockies-ts'
 import React from 'react'
 import {
+  DEFAULT_CHAIN_ID,
   POSTER_APP_VERSION,
   POSTER_CONTRACT_ADDRESS,
   POSTER_CONTRACT_VERSION,
-  POSTER_SUBGRAPH_ID
 } from '../../lib/constants'
 import Balance from '../Balance'
 import ConnectWallet from '../ConnectWallet'
@@ -67,7 +67,7 @@ interface LayoutProps {
  * Component
  */
 const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
-  const { account, deactivate } = useEthers()
+  const { account, deactivate, chainId } = useEthers()
   const { notifications } = useNotifications()
   const { colorMode } = useColorMode()
   const [isLargerThan640px] = useMediaQuery('(min-width: 640px)')
@@ -207,12 +207,12 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
               </Flex>
               <Flex>
                 <Link
-                  href={`https://thegraph.com/legacy-explorer/subgraph/${POSTER_SUBGRAPH_ID}`}
+                  href={`https://thegraph.com/legacy-explorer/subgraph/jjperezaguinaga/poster-${getChainName(chainId || DEFAULT_CHAIN_ID).toLowerCase()}`}
                   isExternal
                 >
                   <Text>Subgraph</Text>
                 </Link>
-                <Tag ml="5px">{POSTER_SUBGRAPH_ID}</Tag>
+                <Tag ml="5px">poster-{getChainName(chainId || DEFAULT_CHAIN_ID).toLowerCase()}</Tag>
               </Flex>
             </Flex>
           </SimpleGrid>
