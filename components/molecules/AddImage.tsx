@@ -3,7 +3,13 @@ import { createClient } from '../../lib/connectors'
 import { ActionType } from '../../lib/reducers'
 import { FrameIcon } from '../atoms/FrameIcon'
 
-export const AddImage = ({ dispatch }: { dispatch: Dispatch<ActionType> }) => {
+export const AddImage = ({
+  dispatch,
+  isDisabled,
+}: {
+  dispatch: Dispatch<ActionType>
+  isDisabled: boolean
+}) => {
   const [files, setFiles] = useState<FileList>()
 
   async function handleSubmit() {
@@ -12,10 +18,10 @@ export const AddImage = ({ dispatch }: { dispatch: Dispatch<ActionType> }) => {
     }
     const client = createClient()
     const cid = await client.add(files)
-    const previewImageURL = `https://ipfs.infura.io/ipfs/${cid.path}`
+    const previewImageCID = cid.path
     dispatch({
-      type: 'SET_PREVIEW_IMAGE_URL',
-      previewImageURL
+      type: 'SET_PREVIEW_IMAGE_CID',
+      previewImageCID,
     })
   }
 
@@ -28,7 +34,8 @@ export const AddImage = ({ dispatch }: { dispatch: Dispatch<ActionType> }) => {
     <>
       <FrameIcon
         boxSize="8"
-        cursor="pointer"
+        cursor={isDisabled ? 'wait' : 'pointer'}
+        pointerEvents={isDisabled ? 'none' : 'auto'}
         onClick={(e) => {
           e.preventDefault()
           inputFile.current?.click()

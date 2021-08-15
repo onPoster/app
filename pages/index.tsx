@@ -33,6 +33,7 @@ import {
 import { useEffect } from 'react'
 import { AddImage } from '../components/molecules/AddImage'
 import { PosterImage } from '../components/atoms/PosterImage'
+import { createURLForCID } from '../lib/connectors'
 
 /**
  * Constants & Helpers
@@ -165,9 +166,9 @@ function HomeIndex(): JSX.Element {
                 >{`${remainingCharacters}`}</Text>
               </InputRightElement>
             </InputGroup>
-            {account && state.previewImageURL && (<PosterImage src={state.previewImageURL} />)}
+            {account && state.previewImageCID && (<PosterImage src={createURLForCID(state.previewImageCID)} />)}
             <Flex alignItems="center" justifyContent="space-between">
-              {account && <AddImage dispatch={dispatch} />}
+              {account && <AddImage isDisabled={state.isLoading} dispatch={dispatch} />}
               <Button
                 mt="2"
                 colorScheme="teal"

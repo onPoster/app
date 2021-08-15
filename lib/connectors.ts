@@ -1,4 +1,5 @@
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
+import { DEFAULT_IPFS_GATEWAY } from './constants';
 const IpfsHttpClient = require('ipfs-http-client');
 
 const POLLING_INTERVAL = 12000
@@ -16,4 +17,8 @@ export const createClient = () => {
   return new IpfsHttpClient(
     new URL('https://ipfs.infura.io:5001/api/v0'),
   );
+}
+
+export const createURLForCID = (cid) => {
+  return `${DEFAULT_IPFS_GATEWAY}${cid}`
 }

@@ -16,7 +16,7 @@ type StateType = {
   isReloadIntervalLoading: boolean
   replyToContent: string
   replyToContentId: string
-  previewImageURL: string
+  previewImageCID: string
 }
 export type ActionType =
   | {
@@ -48,8 +48,8 @@ export type ActionType =
     replyToContentId: StateType['replyToContentId']
   }
   | {
-    type: 'SET_PREVIEW_IMAGE_URL'
-    previewImageURL: StateType['previewImageURL']
+    type: 'SET_PREVIEW_IMAGE_CID'
+    previewImageCID: StateType['previewImageCID']
   }
 
 
@@ -64,7 +64,7 @@ export const initialState: StateType = {
   isReloadIntervalLoading: false,
   replyToContent: '',
   replyToContentId: '',
-  previewImageURL: ''
+  previewImageCID: ''
 }
 
 export function reducer(state: StateType, action: ActionType): StateType {
@@ -104,10 +104,10 @@ export function reducer(state: StateType, action: ActionType): StateType {
         ...state,
         isReloadIntervalLoading: action.isReloadIntervalLoading
       }
-    case 'SET_PREVIEW_IMAGE_URL':
+    case 'SET_PREVIEW_IMAGE_CID':
       return {
         ...state,
-        previewImageURL: action.previewImageURL
+        previewImageCID: action.previewImageCID
       }
     default:
       throw new Error()
@@ -133,9 +133,12 @@ export async function setPostContent(
         Poster.abi,
         signer
       ) as unknown as PosterType
+      // @TODO: For now, replies do not have images.
       const post = state.replyToContentId ?
         PosterSchema.createReplyToPost(state.inputValue, state.replyToContentId) :
-        PosterSchema.createNewPost(state.inputValue)
+        state.previewImageCID ?
+          PosterSchema.createNewPostWithImage(state.inputValue, state.previewImageCID) :
+          PosterSchema.createNewPost(state.inputValue)
       const transaction = await contract.post(post)
       await transaction.wait()
       dispatch({
