@@ -15,6 +15,20 @@ export const GET_ALL_POSTS_IN_DESCENDING_ORDER = gql`
         action {
           type
           text
+          replyTo {
+            id
+            from {
+              id
+            }
+            posts {
+              id
+              rawContent
+              action {
+                type
+                text
+              }
+            }
+          }
         }
       }
     }

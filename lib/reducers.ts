@@ -14,6 +14,8 @@ type StateType = {
   charactersAmount: number
   needsToReloadGetAllPosts: boolean
   isReloadIntervalLoading: boolean
+  replyToContent: string
+  replyToContentId: string
 }
 export type ActionType =
   | {
@@ -36,6 +38,14 @@ export type ActionType =
     type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING'
     isReloadIntervalLoading: StateType['isReloadIntervalLoading']
   }
+  | {
+    type: 'SET_REPLY_TO_CONTENT'
+    replyToContent: StateType['replyToContent']
+  }
+  | {
+    type: 'SET_REPLY_TO_CONTENT_ID'
+    replyToContentId: StateType['replyToContentId']
+  }
 
 
 /**
@@ -46,7 +56,9 @@ export const initialState: StateType = {
   isLoading: false,
   charactersAmount: 0,
   needsToReloadGetAllPosts: false,
-  isReloadIntervalLoading: false
+  isReloadIntervalLoading: false,
+  replyToContent: '',
+  replyToContentId: ''
 }
 
 export function reducer(state: StateType, action: ActionType): StateType {
@@ -60,6 +72,16 @@ export function reducer(state: StateType, action: ActionType): StateType {
       return {
         ...state,
         charactersAmount: action.charactersAmount
+      }
+    case 'SET_REPLY_TO_CONTENT':
+      return {
+        ...state,
+        replyToContent: action.replyToContent
+      }
+    case 'SET_REPLY_TO_CONTENT_ID':
+      return {
+        ...state,
+        replyToContentId: action.replyToContentId
       }
     case 'SET_LOADING':
       return {
@@ -100,7 +122,10 @@ export async function setPostContent(
         Poster.abi,
         signer
       ) as unknown as PosterType
-      const transaction = await contract.post(PosterSchema.createNewPost(state.inputValue))
+      const post = state.replyToContentId ?
+        PosterSchema.createReplyToPost(state.inputValue, state.replyToContentId) :
+        PosterSchema.createNewPost(state.inputValue)
+      const transaction = await contract.post(post)
       await transaction.wait()
       dispatch({
         type: 'SET_LOADING',
@@ -130,5 +155,13 @@ export async function setPostContent(
         isLoading: false,
       })
     }
+    dispatch({
+      type: 'SET_REPLY_TO_CONTENT',
+      replyToContent: ''
+    })
+    dispatch({
+      type: 'SET_REPLY_TO_CONTENT_ID',
+      replyToContentId: ''
+    })
   }
 }
