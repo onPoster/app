@@ -110,6 +110,10 @@ export const ViewGraph = ({
     }
   }
 
+  const getPostContent = (post) => post.action.text
+  ? post.action.text
+  : tryClientSideJSONParsing(post.rawContent)
+
   return (
     <>
       {isReloadIntervalLoading && (
@@ -134,11 +138,14 @@ export const ViewGraph = ({
           .filter(({ from }) => !JACK_CENSORSHIP_LIST.includes(from.id)) // can't have a social network w/o censorship
           .map(({ id, from, posts, timestamp }) => {
             return posts.map((post) => {
-              const postContent = post.action.text
-                ? post.action.text
-                : tryClientSideJSONParsing(post.rawContent)
+              const postContent = getPostContent(post)
               return (
                 <Box key={post.id} mt="8">
+                  {post.action.replyTo && post.action.replyTo.posts[0] && post.action.replyTo.from && (
+                      <Box>
+                        <Text fontSize="sm" opacity="0.9">Reply to {getPostContent(post.action.replyTo.posts[0])} from {post.action.replyTo.from.id}</Text>
+                      </Box>
+                    )}
                   <Flex alignItems="baseline">
                     <Flex>
                       <ENS props={{ mr: '1' }} address={from.id} />·

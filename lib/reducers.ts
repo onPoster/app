@@ -155,5 +155,13 @@ export async function setPostContent(
         isLoading: false,
       })
     }
+    dispatch({
+      type: 'SET_REPLY_TO_CONTENT',
+      replyToContent: ''
+    })
+    dispatch({
+      type: 'SET_REPLY_TO_CONTENT_ID',
+      replyToContentId: ''
+    })
   }
 }
