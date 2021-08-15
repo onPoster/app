@@ -118,6 +118,9 @@ function HomeIndex(): JSX.Element {
           bg={bgColor.containers[colorMode]}
         >
           <Box>
+            {
+              account && state.replyToContentId && <Text>You are replying to: {state.replyToContent}</Text>
+            }
             <InputGroup size="sm">
               <Textarea
                 bg={bgColor.textArea[colorMode]}

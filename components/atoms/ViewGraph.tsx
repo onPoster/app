@@ -26,6 +26,7 @@ import {
   SUBGRAPH_RELOADING_TIME_IN_MS,
 } from '../../lib/constants'
 import { Contract, ethers, getDefaultProvider } from 'ethers'
+import { ChatIcon } from '@chakra-ui/icons'
 
 export const ViewGraph = ({
   getAllPostsNeedsReload,
@@ -36,7 +37,7 @@ export const ViewGraph = ({
   isReloadIntervalLoading: boolean
   dispatch: Dispatch<ActionType>
 }): JSX.Element => {
-  const { chainId, library } = useEthers()
+  const { chainId, library, account } = useEthers()
   const [getPosts, { loading, error, data }] = useLazyQuery(
     GET_ALL_POSTS_IN_DESCENDING_ORDER,
     {
@@ -132,25 +133,47 @@ export const ViewGraph = ({
         transactions
           .filter(({ from }) => !JACK_CENSORSHIP_LIST.includes(from.id)) // can't have a social network w/o censorship
           .map(({ id, from, posts, timestamp }) => {
-            return posts.map((post) => (
-              <Box key={post.id} mt="8">
-                <Flex alignItems="baseline">
-                  <Flex>
-                    <ENS props={{ mr: '1' }} address={from.id} />·
-                    <Link isExternal href={`${getExplorerTransactionLink(id, chainId || DEFAULT_CHAIN_ID)}`}>
-                      <Text mx="1" fontSize="sm" minW="120px">
-                        {format(timestamp * 1000)}
-                      </Text>
-                    </Link>
+            return posts.map((post) => {
+              const postContent = post.action.text
+                ? post.action.text
+                : tryClientSideJSONParsing(post.rawContent)
+              return (
+                <Box key={post.id} mt="8">
+                  <Flex alignItems="baseline">
+                    <Flex>
+                      <ENS props={{ mr: '1' }} address={from.id} />·
+                      <Link
+                        isExternal
+                        href={`${getExplorerTransactionLink(
+                          id,
+                          chainId || DEFAULT_CHAIN_ID
+                        )}`}
+                      >
+                        <Text mx="1" fontSize="sm" minW="120px">
+                          {format(timestamp * 1000)}
+                        </Text>
+                      </Link>
+                    </Flex>
                   </Flex>
-                </Flex>
-                {post.action.text ? (
-                  <Text>{post.action.text}</Text>
-                ) : (
-                  <Text>{tryClientSideJSONParsing(post.rawContent)}</Text>
-                )}
-              </Box>
-            ))
+                  <Text>{postContent}</Text>
+                  {account && (
+                    <ChatIcon
+                      cursor="pointer"
+                      onClick={() => {
+                        dispatch({
+                          type: 'SET_REPLY_TO_CONTENT',
+                          replyToContent: postContent,
+                        })
+                        dispatch({
+                          type: 'SET_REPLY_TO_CONTENT_ID',
+                          replyToContentId: id,
+                        })
+                      }}
+                    />
+                  )}
+                </Box>
+              )
+            })
           })
       )}
     </>
