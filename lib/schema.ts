@@ -1,14 +1,20 @@
 type microblog = 'microblog'
 
 type newPost = {
-  type: microblog,
+  type: microblog
   text: string
 }
 
 type replyToPost = {
-  type: microblog,
+  type: microblog
   text: string
   replyTo: string
+}
+
+type newPostWithImage = {
+  type: microblog
+  text: string
+  image: string
 }
 
 class PosterSchema {
@@ -22,6 +28,12 @@ class PosterSchema {
     "text": rawContent,
     "replyTo": replyToTxId
   } as replyToPost)
+
+  static createNewPostWithImage = (rawContent: string, ipfsCID: string): string => JSON.stringify({
+    "type": "microblog",
+    "text": rawContent,
+    "image": `ipfs://${ipfsCID}`
+  } as newPostWithImage)
 }
 
 export default PosterSchema;

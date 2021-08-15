@@ -9,7 +9,13 @@ export const POSTER_CONTRACT_ADDRESS = '0x0000000000A84Fe7f5d858c8A22121c975Ff0b
 export const POSTER_CONTRACT_VERSION = 'v6'
 export const POSTER_APP_VERSION = '0.1.0'
 
+// NB: Since the application is entirely client side, it makes not much
+// sense to hide it as an environment variable.
+// @TODO Move to env for making harder for bots to crawl ids from source code
 export const INFURA_ID = 'b7f7038518824df4bf3011a0e94bc6a8'
+
+export const DEFAULT_IPFS_GATEWAY = 'https://ipfs.infura.io/ipfs/'
+
 export const PROVIDERS = {
     [ChainId.Goerli]: `https://goerli.infura.io/v3/${INFURA_ID}`,
     [ChainId.Polygon]: `https://polygon-mainnet.infura.io/v3/${INFURA_ID}`,

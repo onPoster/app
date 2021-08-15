@@ -27,6 +27,8 @@ import {
 } from '../../lib/constants'
 import { Contract, ethers, getDefaultProvider } from 'ethers'
 import { ChatIcon } from '@chakra-ui/icons'
+import { createURLFromIPFSHash } from '../../lib/connectors'
+import { PosterImage } from './PosterImage'
 
 export const ViewGraph = ({
   getAllPostsNeedsReload,
@@ -141,6 +143,7 @@ export const ViewGraph = ({
               const postContent = getPostContent(post)
               return (
                 <Box key={post.id} mt="8">
+                  {post.action.image && <PosterImage src={createURLFromIPFSHash(post.action.image)} />}
                   {post.action.replyTo && post.action.replyTo.posts[0] && post.action.replyTo.from && (
                       <Box>
                         <Text fontSize="sm" opacity="0.9">Reply to {getPostContent(post.action.replyTo.posts[0])} from {post.action.replyTo.from.id}</Text>
