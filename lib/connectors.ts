@@ -22,3 +22,7 @@ export const createClient = () => {
 export const createURLForCID = (cid) => {
   return `${DEFAULT_IPFS_GATEWAY}${cid}`
 }
+
+export const createURLFromIPFSHash = (ipfsHash) => {
+  return `${DEFAULT_IPFS_GATEWAY}${ipfsHash.split('://')[1]}`
+}
