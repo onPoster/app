@@ -8,6 +8,7 @@ import {
   Textarea,
   useColorMode,
   SimpleGrid,
+  Flex,
   Link,
 } from '@chakra-ui/react'
 import { ApolloProvider } from '@apollo/client'
@@ -30,6 +31,8 @@ import {
   POSTER_SUBGRAPH_URL_POLYGON,
 } from '../lib/constants'
 import { useEffect } from 'react'
+import { AddImage } from '../components/molecules/AddImage'
+import { PosterImage } from '../components/atoms/PosterImage'
 
 /**
  * Constants & Helpers
@@ -54,16 +57,17 @@ function HomeIndex(): JSX.Element {
 
   const subgraphURLsPerNetwork = {
     [ChainId.Goerli]: POSTER_SUBGRAPH_URL_GOERLI,
-    [ChainId.Polygon]: POSTER_SUBGRAPH_URL_POLYGON
+    [ChainId.Polygon]: POSTER_SUBGRAPH_URL_POLYGON,
   }
 
   useEffect(() => {
-    const subgraphURL = subgraphURLsPerNetwork[chainId ? chainId : DEFAULT_CHAIN_ID]
+    const subgraphURL =
+      subgraphURLsPerNetwork[chainId ? chainId : DEFAULT_CHAIN_ID]
     const apolloClient = getApollo(subgraphURL)
     setApolloClient(apolloClient)
-    return(() => {
+    return () => {
       setApolloClient(null)
-    })
+    }
   }, [chainId])
 
   const { colorMode } = useColorMode()
@@ -95,8 +99,18 @@ function HomeIndex(): JSX.Element {
       <Box d="flex" justifyContent="space-between">
         <Box d="flex">
           <Text>Networks Available</Text>
-          <Tag ml="2" colorScheme={colorScheme[chainId === 5 ? 'online' : 'offline']}>Goerli</Tag>
-          <Tag ml="2" colorScheme={colorScheme[chainId === 137 ? 'online' : 'offline']}>Polygon</Tag>
+          <Tag
+            ml="2"
+            colorScheme={colorScheme[chainId === 5 ? 'online' : 'offline']}
+          >
+            Goerli
+          </Tag>
+          <Tag
+            ml="2"
+            colorScheme={colorScheme[chainId === 137 ? 'online' : 'offline']}
+          >
+            Polygon
+          </Tag>
         </Box>
         <Box d="flex" alignItems="center">
           <GitHubIcon />
@@ -118,9 +132,9 @@ function HomeIndex(): JSX.Element {
           bg={bgColor.containers[colorMode]}
         >
           <Box>
-            {
-              account && state.replyToContentId && <Text>You are replying to: {state.replyToContent}</Text>
-            }
+            {account && state.replyToContentId && (
+              <Text>You are replying to: {state.replyToContent}</Text>
+            )}
             <InputGroup size="sm">
               <Textarea
                 bg={bgColor.textArea[colorMode]}
@@ -133,7 +147,7 @@ function HomeIndex(): JSX.Element {
                 maxLength={300}
                 style={{ overflow: 'hidden', resize: 'none' }}
                 value={state.inputValue}
-                placeholder="Post something funny"
+                placeholder="Post something funny."
                 onChange={(e) => {
                   dispatch({
                     type: 'SET_CHARACTERS_AMOUNT',
@@ -151,23 +165,26 @@ function HomeIndex(): JSX.Element {
                 >{`${remainingCharacters}`}</Text>
               </InputRightElement>
             </InputGroup>
-
-            <Button
-              mt="2"
-              colorScheme="teal"
-              isDisabled={!account}
-              isLoading={state.isLoading}
-              onClick={() =>
-                setPostContent(
-                  POSTER_CONTRACT_ADDRESS,
-                  state,
-                  library,
-                  dispatch
-                )
-              }
-            >
-              {account ? 'Post' : 'Connect wallet to post'}
-            </Button>
+            {account && state.previewImageURL && (<PosterImage src={state.previewImageURL} />)}
+            <Flex alignItems="center" justifyContent="space-between">
+              {account && <AddImage dispatch={dispatch} />}
+              <Button
+                mt="2"
+                colorScheme="teal"
+                isDisabled={!account}
+                isLoading={state.isLoading}
+                onClick={() =>
+                  setPostContent(
+                    POSTER_CONTRACT_ADDRESS,
+                    state,
+                    library,
+                    dispatch
+                  )
+                }
+              >
+                {account ? 'Post' : 'Connect wallet to post'}
+              </Button>
+            </Flex>
           </Box>
           {chainId === 31337 && (
             <Box mt="20px">

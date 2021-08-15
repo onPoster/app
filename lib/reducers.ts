@@ -16,6 +16,7 @@ type StateType = {
   isReloadIntervalLoading: boolean
   replyToContent: string
   replyToContentId: string
+  previewImageURL: string
 }
 export type ActionType =
   | {
@@ -46,6 +47,10 @@ export type ActionType =
     type: 'SET_REPLY_TO_CONTENT_ID'
     replyToContentId: StateType['replyToContentId']
   }
+  | {
+    type: 'SET_PREVIEW_IMAGE_URL'
+    previewImageURL: StateType['previewImageURL']
+  }
 
 
 /**
@@ -58,7 +63,8 @@ export const initialState: StateType = {
   needsToReloadGetAllPosts: false,
   isReloadIntervalLoading: false,
   replyToContent: '',
-  replyToContentId: ''
+  replyToContentId: '',
+  previewImageURL: ''
 }
 
 export function reducer(state: StateType, action: ActionType): StateType {
@@ -97,6 +103,11 @@ export function reducer(state: StateType, action: ActionType): StateType {
       return {
         ...state,
         isReloadIntervalLoading: action.isReloadIntervalLoading
+      }
+    case 'SET_PREVIEW_IMAGE_URL':
+      return {
+        ...state,
+        previewImageURL: action.previewImageURL
       }
     default:
       throw new Error()
