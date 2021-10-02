@@ -8,7 +8,7 @@ import {
 } from '@usedapp/core'
 import type { AppProps } from 'next/app'
 import React from 'react'
-import { INFURA_ID } from '../lib/constants'
+import { INFURA_ID } from '../constants/ethereum'
 
 const config: Config = {
   readOnlyUrls: {

@@ -18,17 +18,19 @@ import {
   Tag,
   Text,
   useColorMode,
-  useMediaQuery
+  useMediaQuery,
 } from '@chakra-ui/react'
 import { getChainName, useEthers, useNotifications } from '@usedapp/core'
 import blockies from 'blockies-ts'
 import React from 'react'
 import {
-  DEFAULT_CHAIN_ID,
   POSTER_APP_VERSION,
-  POSTER_CONTRACT_ADDRESS,
   POSTER_CONTRACT_VERSION,
 } from '../../lib/constants'
+import {
+  POSTER_DEFAULT_CHAIN_ID,
+  POSTER_CONTRACT_ADDRESS,
+} from '../../constants/poster'
 import Balance from '../Balance'
 import ConnectWallet from '../ConnectWallet'
 import Head, { MetaProps } from './Head'
@@ -47,7 +49,7 @@ declare global {
 // Title text for the various transaction notifications.
 const TRANSACTION_TITLES = {
   transactionStarted: 'Local Transaction Started',
-  transactionSucceed: 'Local Transaction Completed'
+  transactionSucceed: 'Local Transaction Completed',
 }
 
 // Takes a long hash string and truncates it.
@@ -79,7 +81,7 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
 
   const logoSource = {
     light: 'images/logo-poster.png',
-    dark: 'images/logo-poster.png'
+    dark: 'images/logo-poster.png',
   }
 
   return (
@@ -137,7 +139,7 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
       <main>
         <Container maxWidth="container.xl">
           {children}
-          {notifications.map(notification => {
+          {notifications.map((notification) => {
             if (notification.type === 'walletConnected') {
               return null
             }
@@ -207,12 +209,19 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
               </Flex>
               <Flex>
                 <Link
-                  href={`https://thegraph.com/legacy-explorer/subgraph/jjperezaguinaga/poster-${getChainName(chainId || DEFAULT_CHAIN_ID).toLowerCase()}`}
+                  href={`https://thegraph.com/legacy-explorer/subgraph/jjperezaguinaga/poster-${getChainName(
+                    chainId || POSTER_DEFAULT_CHAIN_ID
+                  ).toLowerCase()}`}
                   isExternal
                 >
                   <Text>Subgraph</Text>
                 </Link>
-                <Tag ml="5px">poster-{getChainName(chainId || DEFAULT_CHAIN_ID).toLowerCase()}</Tag>
+                <Tag ml="5px">
+                  poster-
+                  {getChainName(
+                    chainId || POSTER_DEFAULT_CHAIN_ID
+                  ).toLowerCase()}
+                </Tag>
               </Flex>
             </Flex>
           </SimpleGrid>

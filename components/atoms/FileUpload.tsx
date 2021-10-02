@@ -8,7 +8,7 @@ type FileUploadProps = {
   onChangeHandler?: (HTMLInputElement) => void
 }
 
-export const FileUpload = (props: FileUploadProps) => {
+export const FileUpload = (props: FileUploadProps): JSX.Element => {
   const { children, onChangeHandler } = props
   const inputRef = useRef<HTMLInputElement | null>(null)
 

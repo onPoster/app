@@ -12,58 +12,44 @@ import {
   Link,
 } from '@chakra-ui/react'
 import { ApolloProvider } from '@apollo/client'
-import { getApollo } from '../lib/apolloClient'
-import { ChainId, useEthers, useSendTransaction } from '@usedapp/core'
+import { useEthers } from '@usedapp/core'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
-import { providers, utils } from 'ethers'
-import React, { useReducer, useState } from 'react'
+import React, { useReducer, useState, useEffect } from 'react'
 
 import { DarkModeSwitch } from '../components/atoms/DarkModeSwitch'
 import { GitHubIcon } from '../components/atoms/GitHubIcon'
 import { ViewGraph } from '../components/atoms/ViewGraph'
-
 import Layout from '../components/layout/Layout'
-import { initialState, reducer, setPostContent } from '../lib/reducers'
-import {
-  DEFAULT_CHAIN_ID,
-  POSTER_CONTRACT_ADDRESS,
-  POSTER_SUBGRAPH_URL_GOERLI,
-  POSTER_SUBGRAPH_URL_POLYGON,
-} from '../lib/constants'
-import { useEffect } from 'react'
 import { AddImage } from '../components/molecules/AddImage'
 import { PosterImage } from '../components/atoms/PosterImage'
+
+import { getApollo } from '../lib/apolloClient'
+import { initialState, reducer, setPostContent } from '../lib/reducers'
 import { createURLForCID } from '../lib/connectors'
 
-/**
- * Constants & Helpers
- */
-
-const localProvider = new providers.StaticJsonRpcProvider(
-  'http://localhost:8555'
-)
-
-const MAX_AMOUNT_OF_CHARACTERS = 300
-
-const bgColor = {
-  containers: { light: 'gray.100', dark: 'gray.900' },
-  textArea: { light: 'alphaWhite.100', dark: 'gray.900' },
-}
-const color = { light: '#414141', dark: 'white' }
+import {
+  POSTER_MAX_AMOUNT_OF_CHARACTERS,
+  POSTER_SUBGRAPH_URLS_BY_CHAIN_ID_MAP,
+  POSTER_DEFAULT_CHAIN_ID,
+  POSTER_CONTRACT_ADDRESS,
+} from '../constants/poster'
+import {
+  POSTER_UI_BG_COLOR_MAP,
+  POSTER_UI_COLOR_SCHEME,
+  POSTER_UI_TEXT_COLOR_MAP,
+} from '../constants/ui'
 
 function HomeIndex(): JSX.Element {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { account, chainId, library } = useEthers()
+  const {account, chainId, library} = useEthers()
   const [apolloClient, setApolloClient] = useState()
-
-  const subgraphURLsPerNetwork = {
-    [ChainId.Goerli]: POSTER_SUBGRAPH_URL_GOERLI,
-    [ChainId.Polygon]: POSTER_SUBGRAPH_URL_POLYGON,
-  }
+  const {colorMode} = useColorMode()
 
   useEffect(() => {
     const subgraphURL =
-      subgraphURLsPerNetwork[chainId ? chainId : DEFAULT_CHAIN_ID]
+      POSTER_SUBGRAPH_URLS_BY_CHAIN_ID_MAP[
+        chainId ? chainId : POSTER_DEFAULT_CHAIN_ID
+      ]
     const apolloClient = getApollo(subgraphURL)
     setApolloClient(apolloClient)
     return () => {
@@ -71,29 +57,8 @@ function HomeIndex(): JSX.Element {
     }
   }, [chainId])
 
-  const { colorMode } = useColorMode()
-
-  const remainingCharacters = MAX_AMOUNT_OF_CHARACTERS - state.charactersAmount
-
-  const isLocalChain =
-    chainId === ChainId.Localhost || chainId === ChainId.Hardhat
-
-  // Use the localProvider as the signer to send ETH to our wallet
-  const { sendTransaction } = useSendTransaction({
-    signer: localProvider.getSigner(),
-  })
-
-  function sendFunds(): void {
-    sendTransaction({
-      to: account,
-      value: utils.parseEther('0.1'),
-    })
-  }
-
-  const colorScheme = {
-    online: 'green',
-    offline: 'gray',
-  }
+  const remainingCharacters =
+    POSTER_MAX_AMOUNT_OF_CHARACTERS - state.charactersAmount
 
   return (
     <Layout>
@@ -102,13 +67,17 @@ function HomeIndex(): JSX.Element {
           <Text>Networks Available</Text>
           <Tag
             ml="2"
-            colorScheme={colorScheme[chainId === 5 ? 'online' : 'offline']}
+            colorScheme={
+              POSTER_UI_COLOR_SCHEME[chainId === 5 ? 'online' : 'offline']
+            }
           >
             Goerli
           </Tag>
           <Tag
             ml="2"
-            colorScheme={colorScheme[chainId === 137 ? 'online' : 'offline']}
+            colorScheme={
+              POSTER_UI_COLOR_SCHEME[chainId === 137 ? 'online' : 'offline']
+            }
           >
             Polygon
           </Tag>
@@ -130,7 +99,7 @@ function HomeIndex(): JSX.Element {
           maxWidth="container.sm"
           p="8"
           mt="8"
-          bg={bgColor.containers[colorMode]}
+          bg={POSTER_UI_BG_COLOR_MAP.containers[colorMode]}
         >
           <Box>
             {account && state.replyToContentId && (
@@ -138,8 +107,8 @@ function HomeIndex(): JSX.Element {
             )}
             <InputGroup size="sm">
               <Textarea
-                bg={bgColor.textArea[colorMode]}
-                color={color[colorMode]}
+                bg={POSTER_UI_BG_COLOR_MAP.textArea[colorMode]}
+                color={POSTER_UI_TEXT_COLOR_MAP[colorMode]}
                 type="text"
                 rows={10}
                 cols={10}
@@ -166,9 +135,13 @@ function HomeIndex(): JSX.Element {
                 >{`${remainingCharacters}`}</Text>
               </InputRightElement>
             </InputGroup>
-            {account && state.previewImageCID && (<PosterImage src={createURLForCID(state.previewImageCID)} />)}
+            {account && state.previewImageCID && (
+              <PosterImage src={createURLForCID(state.previewImageCID)} />
+            )}
             <Flex alignItems="center" justifyContent="space-between">
-              {account && <AddImage isDisabled={state.isLoading} dispatch={dispatch} />}
+              {account && (
+                <AddImage isDisabled={state.isLoading} dispatch={dispatch} />
+              )}
               <Button
                 mt="2"
                 colorScheme="teal"
@@ -187,18 +160,6 @@ function HomeIndex(): JSX.Element {
               </Button>
             </Flex>
           </Box>
-          {chainId === 31337 && (
-            <Box mt="20px">
-              <Text mb="4">This button only works on a Local Chain.</Text>
-              <Button
-                colorScheme="teal"
-                onClick={sendFunds}
-                isDisabled={!isLocalChain}
-              >
-                Send Funds From Local Hardhat Chain
-              </Button>
-            </Box>
-          )}
         </Box>
         <Box p="5">
           {apolloClient && (
