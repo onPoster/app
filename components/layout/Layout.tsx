@@ -11,11 +11,17 @@ import {
   Tag,
   Text,
 } from '@chakra-ui/react'
-import { getChainName, useEthers, useNotifications } from '@usedapp/core'
-import React from 'react'
 import {
-  POSTER_APP_VERSION,
-} from '../../lib/constants'
+  getChainName,
+  ChainId,
+  useNotifications,
+  useEthers,
+} from '@usedapp/core'
+import React from 'react'
+import { Biconomy } from '@biconomy/mexa'
+import { providers } from 'ethers'
+import { ETHEREUM_PROVIDERS } from '../../constants/ethereum'
+import { POSTER_APP_VERSION } from '../../lib/constants'
 import {
   POSTER_DEFAULT_CHAIN_ID,
   POSTER_CONTRACT_ADDRESS,
@@ -27,6 +33,8 @@ import { Account } from '../atoms/Account'
 import { truncateHash } from '../../lib/helpers'
 import { GitHubIcon } from '../atoms/GitHubIcon'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
+import { ActionType } from '../../lib/reducers'
+import { useEffect } from 'react'
 
 // Extends `window` to add `ethereum`.
 declare global {
@@ -51,14 +59,34 @@ const TRANSACTION_TITLES = {
 interface LayoutProps {
   children: React.ReactNode
   customMeta?: MetaProps
+  dispatch: React.Dispatch<ActionType>
 }
 
 /**
  * Component
  */
-const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
-  const { account, chainId } = useEthers()
+const Layout = ({
+  children,
+  customMeta,
+  dispatch,
+}: LayoutProps): JSX.Element => {
+  const { account, chainId, library } = useEthers()
   const { notifications } = useNotifications()
+
+  useEffect(() => {
+    const loadBiconomy = async() => {
+      const biconomy = new Biconomy(
+        new providers.JsonRpcProvider(ETHEREUM_PROVIDERS[ChainId.Polygon]),
+        { apiKey: process.env.NEXT_PUBLIC_BICONOMY_KEY, walletProvider: library.provider }
+      )
+      await new Promise((resolve, reject) => biconomy.onEvent(biconomy.READY, resolve).onEvent(biconomy.ERROR, reject))
+      dispatch({
+        type: 'SET_BICONOMY',
+        biconomy,
+      })
+    }
+    library && loadBiconomy()
+  }, [library])
 
   return (
     <>
@@ -66,7 +94,7 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
       <header>
         <Container maxWidth="container.xl">
           <SimpleGrid
-            columns={[2, 2, 2, 2]}
+            columns={[3, 2, 2, 2]}
             alignItems="center"
             justifyContent="space-between"
             py="4"

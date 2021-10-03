@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@apollo/client": "3.1.1",
+    "@biconomy/mexa": "^2.0.20",
     "@chakra-ui/icons": "^1.0.14",
     "@chakra-ui/react": "^1.6.3",
     "@emotion/react": "^11",

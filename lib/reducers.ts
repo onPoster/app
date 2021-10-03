@@ -1,6 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers'
-import { ethers } from 'ethers'
-import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
+import { ethers, PopulatedTransaction } from 'ethers'
+import { Biconomy } from '@biconomy/mexa'
+import PosterABI from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
 import { Poster as PosterType } from 'Poster/typechain/Poster'
 import { SUBGRAPH_RELOADING_TIME_IN_MS } from './constants'
 import PosterSchema from './schema'
@@ -17,6 +18,7 @@ type StateType = {
   replyToContent: string
   replyToContentId: string
   previewImageCID: string
+  biconomy: Biconomy
 }
 export type ActionType =
   | {
@@ -51,6 +53,10 @@ export type ActionType =
     type: 'SET_PREVIEW_IMAGE_CID'
     previewImageCID: StateType['previewImageCID']
   }
+  | {
+    type: 'SET_BICONOMY'
+    biconomy: StateType['biconomy']
+  }
 
 
 /**
@@ -64,7 +70,8 @@ export const initialState: StateType = {
   isReloadIntervalLoading: false,
   replyToContent: '',
   replyToContentId: '',
-  previewImageCID: ''
+  previewImageCID: '',
+  biconomy: null
 }
 
 export function reducer(state: StateType, action: ActionType): StateType {
@@ -109,9 +116,24 @@ export function reducer(state: StateType, action: ActionType): StateType {
         ...state,
         previewImageCID: action.previewImageCID
       }
+    case 'SET_BICONOMY':
+      return {
+        ...state,
+        biconomy: action.biconomy,
+      }
     default:
       throw new Error()
   }
+}
+
+const gasLessPost = async (contractAddress: string, address: string, state: StateType, transaction: Promise<PopulatedTransaction>) => {
+  const { data } = await transaction;
+  const provider = state.biconomy.getEthersProvider()
+
+  await provider.send('eth_sendTransaction', [{ data, from: address, to: contractAddress, signatureType: 'EIP712_SIGN' }])
+  .catch(err => console.error(err))
+
+  // await provider.once(tx, () => {}) // @TODO Trigger subgraph update with tx = await provider.send
 }
 
 export async function setPostContent(
@@ -128,19 +150,28 @@ export async function setPostContent(
         isLoading: true,
       })
       const signer = provider.getSigner()
+      const address = await signer.getAddress()
+
+      // Replaced by gasless tx
       const contract = new ethers.Contract(
         PosterContractAddress,
-        Poster.abi,
-        signer
+        PosterABI.abi,
+        state.biconomy ? 
+          state.biconomy.getSignerByAddress(address) : signer
       ) as unknown as PosterType
+
       // @TODO: For now, replies do not have images.
       const post = state.replyToContentId ?
         PosterSchema.createReplyToPost(state.inputValue, state.replyToContentId) :
         state.previewImageCID ?
           PosterSchema.createNewPostWithImage(state.inputValue, state.previewImageCID) :
           PosterSchema.createNewPost(state.inputValue)
-      const transaction = await contract.post(post)
-      await transaction.wait()
+
+      // Replacing for gas-less transaction
+      // const transaction = await contract.post(post)
+      // await transaction.wait()
+      await gasLessPost(PosterContractAddress, await signer.getAddress(), state, contract.populateTransaction.post(post))
+
       dispatch({
         type: 'SET_LOADING',
         isLoading: false,

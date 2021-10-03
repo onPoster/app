@@ -9,7 +9,6 @@ import {
 } from '@chakra-ui/react'
 import blockies from 'blockies-ts'
 import { useEthers } from '@usedapp/core'
-import Balance from '../Balance'
 import { truncateHash } from '../../lib/helpers'
 export const Account = () => {
   const { account, deactivate } = useEthers()
@@ -20,14 +19,14 @@ export const Account = () => {
 
   return (
     <Flex
-      order={[-1, null, null, 2]}
+      order={[null, null, null, 2]}
       alignItems={'center'}
       justifyContent={['flex-start', null, null, 'flex-end']}
+      w={{ base: "200%", md: "auto" }}
     >
-      <Balance />
       <Image ml="4" src={blockieImageSrc} alt="blockie" />
       <Menu placement="bottom-end">
-        <MenuButton as={Button} ml="4">
+        <MenuButton as={Button} ml="4" w={{ base: "200%", md: "auto" }}>
           {truncateHash(account)}
         </MenuButton>
         <MenuList>

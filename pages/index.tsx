@@ -56,17 +56,11 @@ function HomeIndex(): JSX.Element {
     POSTER_MAX_AMOUNT_OF_CHARACTERS - state.charactersAmount
 
   return (
-    <Layout>
-      <Box d="flex" justifyContent="space-between">
-        <Box d="flex" alignItems="center">
-          
-        </Box>
-      </Box>
+    <Layout dispatch={dispatch}>
       <SimpleGrid columns={[1, 1, 1, 2]}>
         <Box
           maxWidth="container.sm"
           p="8"
-          mt="8"
           bg={POSTER_UI_BG_COLOR_MAP.containers[colorMode]}
         >
           <Box>
