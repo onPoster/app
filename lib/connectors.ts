@@ -19,10 +19,10 @@ export const createClient = (): typeof IpfsHttpClient => {
   );
 }
 
-export const createURLForCID = (cid): string => {
+export const createURLForCID = (cid: string): string => {
   return `${DEFAULT_IPFS_GATEWAY}${cid}`
 }
 
-export const createURLFromIPFSHash = (ipfsHash): string => {
+export const createURLFromIPFSHash = (ipfsHash: string): string => {
   return `${DEFAULT_IPFS_GATEWAY}${ipfsHash.split('://')[1]}`
 }

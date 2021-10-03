@@ -1,6 +1,7 @@
 import { Text, TextProps } from '@chakra-ui/react'
 import { useEthers } from '@usedapp/core'
 import { useEffect, useState } from 'react'
+import { truncateHash } from '../../lib/helpers'
 
 export const ENS = ({ address, props }: { address: string, props: TextProps }): JSX.Element => {
   const { library } = useEthers()
@@ -24,5 +25,5 @@ export const ENS = ({ address, props }: { address: string, props: TextProps }): 
     }
   }, [address, library])
 
-  return <Text fontFamily="mono" {...props}>{ens || address}</Text>
+  return <Text fontFamily="mono" {...props}>{ens || truncateHash(address)}</Text>
 }

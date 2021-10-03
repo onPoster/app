@@ -9,3 +9,8 @@ export const POSTER_UI_COLOR_SCHEME = {
   online: 'green',
   offline: 'gray',
 }
+
+export const POSTER_UI_LOGO = {
+  light: 'images/logo-poster.png',
+  dark: 'images/logo-poster.png',
+}

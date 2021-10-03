@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Tag,
   InputGroup,
   InputRightElement,
   Text,
@@ -9,15 +8,12 @@ import {
   useColorMode,
   SimpleGrid,
   Flex,
-  Link,
 } from '@chakra-ui/react'
 import { ApolloProvider } from '@apollo/client'
 import { useEthers } from '@usedapp/core'
-import { ExternalLinkIcon } from '@chakra-ui/icons'
 import React, { useReducer, useState, useEffect } from 'react'
 
 import { DarkModeSwitch } from '../components/atoms/DarkModeSwitch'
-import { GitHubIcon } from '../components/atoms/GitHubIcon'
 import { ViewGraph } from '../components/atoms/ViewGraph'
 import Layout from '../components/layout/Layout'
 import { AddImage } from '../components/molecules/AddImage'
@@ -35,7 +31,6 @@ import {
 } from '../constants/poster'
 import {
   POSTER_UI_BG_COLOR_MAP,
-  POSTER_UI_COLOR_SCHEME,
   POSTER_UI_TEXT_COLOR_MAP,
 } from '../constants/ui'
 
@@ -63,35 +58,8 @@ function HomeIndex(): JSX.Element {
   return (
     <Layout>
       <Box d="flex" justifyContent="space-between">
-        <Box d="flex">
-          <Text>Networks Available</Text>
-          <Tag
-            ml="2"
-            colorScheme={
-              POSTER_UI_COLOR_SCHEME[chainId === 5 ? 'online' : 'offline']
-            }
-          >
-            Goerli
-          </Tag>
-          <Tag
-            ml="2"
-            colorScheme={
-              POSTER_UI_COLOR_SCHEME[chainId === 137 ? 'online' : 'offline']
-            }
-          >
-            Polygon
-          </Tag>
-        </Box>
         <Box d="flex" alignItems="center">
-          <GitHubIcon />
-          <Link
-            mx="2"
-            href="https://github.com/ETHPoster/app/issues/new"
-            isExternal
-          >
-            Suggest feature
-          </Link>
-          <ExternalLinkIcon />
+          
         </Box>
       </Box>
       <SimpleGrid columns={[1, 1, 1, 2]}>

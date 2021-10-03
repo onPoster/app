@@ -4,36 +4,29 @@ import {
   AlertIcon,
   AlertTitle,
   Box,
-  Button,
   Container,
   Flex,
-  Heading,
-  Image,
   Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   SimpleGrid,
   Tag,
   Text,
-  useColorMode,
-  useMediaQuery,
 } from '@chakra-ui/react'
 import { getChainName, useEthers, useNotifications } from '@usedapp/core'
-import blockies from 'blockies-ts'
 import React from 'react'
 import {
   POSTER_APP_VERSION,
-  POSTER_CONTRACT_VERSION,
 } from '../../lib/constants'
 import {
   POSTER_DEFAULT_CHAIN_ID,
   POSTER_CONTRACT_ADDRESS,
 } from '../../constants/poster'
-import Balance from '../Balance'
 import ConnectWallet from '../ConnectWallet'
 import Head, { MetaProps } from './Head'
+import { Headline } from '../atoms/Headline'
+import { Account } from '../atoms/Account'
+import { truncateHash } from '../../lib/helpers'
+import { GitHubIcon } from '../atoms/GitHubIcon'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 
 // Extends `window` to add `ethereum`.
 declare global {
@@ -52,11 +45,6 @@ const TRANSACTION_TITLES = {
   transactionSucceed: 'Local Transaction Completed',
 }
 
-// Takes a long hash string and truncates it.
-function truncateHash(hash: string, length = 38): string {
-  return hash.replace(hash.substring(6, length), '...')
-}
-
 /**
  * Prop Types
  */
@@ -69,20 +57,8 @@ interface LayoutProps {
  * Component
  */
 const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
-  const { account, deactivate, chainId } = useEthers()
+  const { account, chainId } = useEthers()
   const { notifications } = useNotifications()
-  const { colorMode } = useColorMode()
-  const [isLargerThan640px] = useMediaQuery('(min-width: 640px)')
-
-  let blockieImageSrc
-  if (typeof window !== 'undefined') {
-    blockieImageSrc = blockies.create({ seed: account }).toDataURL()
-  }
-
-  const logoSource = {
-    light: 'images/logo-poster.png',
-    dark: 'images/logo-poster.png',
-  }
 
   return (
     <>
@@ -90,49 +66,13 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
       <header>
         <Container maxWidth="container.xl">
           <SimpleGrid
-            columns={[1, 1, 1, 2]}
+            columns={[2, 2, 2, 2]}
             alignItems="center"
             justifyContent="space-between"
-            py="8"
+            py="4"
           >
-            <Box d="flex" alignItems="center">
-              <Heading as="h1">
-                <Image
-                  maxWidth="100px"
-                  src={logoSource[colorMode]}
-                  alt="Poster"
-                />
-              </Heading>
-              <Text fontSize="lg">
-                A general purpose decentralized social network.
-              </Text>
-            </Box>
-            {account ? (
-              <Flex
-                order={[-1, null, null, 2]}
-                alignItems={'center'}
-                justifyContent={['flex-start', null, null, 'flex-end']}
-              >
-                <Balance />
-                <Image ml="4" src={blockieImageSrc} alt="blockie" />
-                <Menu placement="bottom-end">
-                  <MenuButton as={Button} ml="4">
-                    {truncateHash(account)}
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem
-                      onClick={() => {
-                        deactivate()
-                      }}
-                    >
-                      Disconnect
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              </Flex>
-            ) : (
-              <ConnectWallet />
-            )}
+            <Headline />
+            {account ? <Account /> : <ConnectWallet />}
           </SimpleGrid>
         </Container>
       </header>
@@ -189,41 +129,47 @@ const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
               </Link>
               .
             </Box>
-            <Flex
+            <SimpleGrid
+              columns={[1, 1, 3, 3]}
+              gap="4"
+              mt="4"
               justifyContent="flex-end"
               alignContent="center"
-              flexFlow={isLargerThan640px ? 'row' : 'column'}
+              alignItems="center"
+              flexFlow={{ base: 'column', md: 'row' }}
             >
-              <Flex mr="8">
+              <Flex alignItems="baseline" w="100%" justifyContent="center">
+                <GitHubIcon />
+                <Link
+                  mx="2"
+                  href="https://github.com/ETHPoster/app/issues/new"
+                  isExternal
+                >
+                  Suggest feature
+                </Link>
+                <ExternalLinkIcon />
+              </Flex>
+              <Flex w="100%" justifyContent="center">
                 <Text>App</Text>
                 <Tag ml="5px">{POSTER_APP_VERSION}</Tag>
               </Flex>
-              <Flex mr="8">
+              <Flex w="100%" justifyContent="space-around">
                 <Link
                   href={`https://blockscan.com/address/${POSTER_CONTRACT_ADDRESS}`}
                   isExternal
                 >
-                  <Text>Contract</Text>
+                  <Text textDecoration="underline">Contract</Text>
                 </Link>
-                <Tag ml="5px">{POSTER_CONTRACT_VERSION}</Tag>
-              </Flex>
-              <Flex>
                 <Link
                   href={`https://thegraph.com/legacy-explorer/subgraph/jjperezaguinaga/poster-${getChainName(
                     chainId || POSTER_DEFAULT_CHAIN_ID
                   ).toLowerCase()}`}
                   isExternal
                 >
-                  <Text>Subgraph</Text>
+                  <Text textDecoration="underline">Subgraph</Text>
                 </Link>
-                <Tag ml="5px">
-                  poster-
-                  {getChainName(
-                    chainId || POSTER_DEFAULT_CHAIN_ID
-                  ).toLowerCase()}
-                </Tag>
               </Flex>
-            </Flex>
+            </SimpleGrid>
           </SimpleGrid>
         </Container>
       </footer>
