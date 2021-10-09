@@ -14,19 +14,22 @@ import { useEthers } from '@usedapp/core'
 import React from 'react'
 import { walletconnect } from '../lib/connectors'
 
+
 function ConnectWallet(): JSX.Element {
   const { activate, activateBrowserWallet } = useEthers()
-
   const { onOpen, isOpen, onClose } = useDisclosure()
 
   return (
     <>
       <Box
-        order={[-1, null, null, 2]}
-        textAlign={['left', null, null, 'right']}
+        order={[null, null, null, 2]}
+        textAlign={['right', null, null, 'right']}
+        w="100%"
+        display="block"
+        margin="auto"
       >
         <Button colorScheme="teal" variant="outline" onClick={onOpen}>
-          Connect to a wallet
+          Connect wallet
         </Button>
       </Box>
       <Modal isOpen={isOpen} onClose={onClose}>

@@ -1,5 +1,5 @@
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
-import { DEFAULT_IPFS_GATEWAY } from './constants';
+import { DEFAULT_IPFS_GATEWAY } from '../constants/ethereum';
 const IpfsHttpClient = require('ipfs-http-client');
 
 const POLLING_INTERVAL = 12000
@@ -13,16 +13,16 @@ export const walletconnect = new WalletConnectConnector({
   pollingInterval: POLLING_INTERVAL,
 })
 
-export const createClient = () => {
+export const createClient = (): typeof IpfsHttpClient => {
   return new IpfsHttpClient(
     new URL('https://ipfs.infura.io:5001/api/v0'),
   );
 }
 
-export const createURLForCID = (cid) => {
+export const createURLForCID = (cid: string): string => {
   return `${DEFAULT_IPFS_GATEWAY}${cid}`
 }
 
-export const createURLFromIPFSHash = (ipfsHash) => {
+export const createURLFromIPFSHash = (ipfsHash: string): string => {
   return `${DEFAULT_IPFS_GATEWAY}${ipfsHash.split('://')[1]}`
 }

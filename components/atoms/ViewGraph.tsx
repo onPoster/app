@@ -18,17 +18,19 @@ import { GET_ALL_POSTS_IN_DESCENDING_ORDER } from '../../lib/queries'
 import { ActionType } from '../../lib/reducers'
 import { ENS } from './ENS'
 import {
-  DEFAULT_CHAIN_ID,
-  DEFAULT_NETWORK,
   INFURA_CONFIGURATION,
   JACK_CENSORSHIP_LIST,
-  POSTER_CONTRACT_ADDRESS,
   SUBGRAPH_RELOADING_TIME_IN_MS,
 } from '../../lib/constants'
 import { Contract, ethers, getDefaultProvider } from 'ethers'
 import { ChatIcon } from '@chakra-ui/icons'
 import { createURLFromIPFSHash } from '../../lib/connectors'
 import { PosterImage } from './PosterImage'
+import {
+  POSTER_CONTRACT_ADDRESS,
+  POSTER_DEFAULT_CHAIN_ID,
+  POSTER_DEFAULT_NETWORK,
+} from '../../constants/poster'
 
 export const ViewGraph = ({
   getAllPostsNeedsReload,
@@ -62,8 +64,9 @@ export const ViewGraph = ({
     }
     loadPosts()
     const defaultProvider =
-      library || getDefaultProvider(DEFAULT_NETWORK, INFURA_CONFIGURATION)
-    const defaultChainId = chainId || DEFAULT_CHAIN_ID
+      library ||
+      getDefaultProvider(POSTER_DEFAULT_NETWORK, INFURA_CONFIGURATION)
+    const defaultChainId = chainId || POSTER_DEFAULT_CHAIN_ID
 
     if (defaultProvider && defaultChainId !== undefined) {
       let interval
@@ -97,7 +100,7 @@ export const ViewGraph = ({
         clearTimeout(interval)
       }
     }
-  }, [getAllPostsNeedsReload, library])
+  }, [getAllPostsNeedsReload, chainId, library])
 
   // @TODO Add actual accounts & transactions types
   const transactions = (data && data.transactions) || []
@@ -112,9 +115,10 @@ export const ViewGraph = ({
     }
   }
 
-  const getPostContent = (post) => post.action.text
-  ? post.action.text
-  : tryClientSideJSONParsing(post.rawContent)
+  const getPostContent = (post) =>
+    post.action.text
+      ? post.action.text
+      : tryClientSideJSONParsing(post.rawContent)
 
   return (
     <>
@@ -143,10 +147,20 @@ export const ViewGraph = ({
               const postContent = getPostContent(post)
               return (
                 <Box key={post.id} mt="8">
-                  {post.action.image && <PosterImage src={createURLFromIPFSHash(post.action.image)} />}
-                  {post.action.replyTo && post.action.replyTo.posts[0] && post.action.replyTo.from && (
+                  {post.action.image && (
+                    <PosterImage
+                      src={createURLFromIPFSHash(post.action.image)}
+                    />
+                  )}
+                  {post.action.replyTo &&
+                    post.action.replyTo.posts[0] &&
+                    post.action.replyTo.from && (
                       <Box>
-                        <Text fontSize="sm" opacity="0.9">Reply to {getPostContent(post.action.replyTo.posts[0])} from {post.action.replyTo.from.id}</Text>
+                        <Text fontSize="sm" opacity="0.9">
+                          Reply to{' '}
+                          {getPostContent(post.action.replyTo.posts[0])} from{' '}
+                          {post.action.replyTo.from.id}
+                        </Text>
                       </Box>
                     )}
                   <Flex alignItems="baseline">
@@ -156,7 +170,7 @@ export const ViewGraph = ({
                         isExternal
                         href={`${getExplorerTransactionLink(
                           id,
-                          chainId || DEFAULT_CHAIN_ID
+                          chainId || POSTER_DEFAULT_CHAIN_ID
                         )}`}
                       >
                         <Text mx="1" fontSize="sm" minW="120px">
