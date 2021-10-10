@@ -2,7 +2,7 @@ import { ChainId } from "@usedapp/core"
 import { ETHEREUM_PROVIDERS } from "./ethereum"
 
 const POSTER_SUBGRAPH_URL_GOERLI = `https://api.thegraph.com/subgraphs/name/jjperezaguinaga/poster-goerli`
-const POSTER_SUBGRAPH_URL_POLYGON = 'https://api.thegraph.com/subgraphs/name/jjperezaguinaga/poster-polygon'
+const POSTER_SUBGRAPH_URL_POLYGON = 'https://api.thegraph.com/subgraphs/id/QmQWtvmeyiLFcvRtUGhREXjoN1pKjMK7YcKk9wz4HeXXAH'
 
 export const POSTER_DEFAULT_CHAIN_ID = ChainId.Polygon
 export const POSTER_CONTRACT_ADDRESS = '0x0000000000A84Fe7f5d858c8A22121c975Ff0b42'
