@@ -8,6 +8,7 @@ import {
   Text,
   Flex,
   Link,
+  Tag,
 } from '@chakra-ui/react'
 import { getExplorerTransactionLink, useEthers } from '@usedapp/core'
 import { Dispatch, useEffect } from 'react'
@@ -31,6 +32,35 @@ import {
   POSTER_DEFAULT_CHAIN_ID,
   POSTER_DEFAULT_NETWORK,
 } from '../../constants/poster'
+
+type PIP1Post_Reply = {
+  posts: string[]
+  from: {
+    id: string
+  }
+}
+
+type PIP1Post = {
+  type: 'microblog'
+  text: string
+  image?: string
+  replyTo?: PIP1Post_Reply
+}
+
+type PIP2Post = {
+  type: 'microblog'
+  from: string
+  text: PIP1Post
+}
+
+type ParsedPost = {
+  content: string
+  proxy?: {
+    from: string
+  }
+  image?: string
+  replyTo?: PIP1Post_Reply
+}
 
 export const ViewGraph = ({
   getAllPostsNeedsReload,
@@ -105,24 +135,32 @@ export const ViewGraph = ({
   // @TODO Add actual accounts & transactions types
   const transactions = (data && data.transactions) || []
 
-  const tryClientSideJSONParsing = (rawContent): string => {
+  const parsePost = (post): ParsedPost => {
     try {
-      // NB: Trying to import generated schema (assembly script) to typescript will fail.
-      const action: { text: string } | { text: { text: string }} = JSON.parse(rawContent)
-
-      if (typeof action.text == 'object') {
-        return action.text.text;
+      const parsedPost: PIP1Post | PIP2Post = JSON.parse(post.rawContent)
+      if (typeof parsedPost.text == 'object') {
+        const castedPost = parsedPost as PIP2Post
+        return {
+          content: castedPost.text.text,
+          proxy: { from: castedPost.from },
+          image: castedPost.text.image,
+          replyTo: castedPost.text.replyTo,
+        }
+      } else {
+        const castedPost = parsedPost as PIP1Post
+        return {
+          content: castedPost.text,
+          image: castedPost.image,
+          replyTo: castedPost.replyTo,
+        }
       }
-      return action.text
-    } catch {
-      return rawContent
+    } catch (err) {
+      console.error('Error parsing the posted content.')
+      return {
+        content: post.action.text,
+      }
     }
   }
-
-  const getPostContent = (post) =>
-    post.action.text
-      ? post.action.text
-      : tryClientSideJSONParsing(post.rawContent)
 
   return (
     <>
@@ -148,28 +186,27 @@ export const ViewGraph = ({
           .filter(({ from }) => !JACK_CENSORSHIP_LIST.includes(from.id)) // can't have a social network w/o censorship
           .map(({ id, from, posts, timestamp }) => {
             return posts.map((post) => {
-              const postContent = getPostContent(post)
+              const parsedPost = parsePost(post)
+              const { content, proxy, image } = parsedPost
               return (
-                postContent && <Box key={post.id} mt="8">
-                  {post.action.image && (
-                    <PosterImage
-                      src={createURLFromIPFSHash(post.action.image)}
-                    />
-                  )}
-                  {post.action.replyTo &&
-                    post.action.replyTo.posts[0] &&
-                    post.action.replyTo.from && (
-                      <Box>
-                        <Text fontSize="sm" opacity="0.9">
-                          Reply to{' '}
-                          {getPostContent(post.action.replyTo.posts[0])} from{' '}
-                          {post.action.replyTo.from.id}
-                        </Text>
-                      </Box>
-                    )}
+                content && <Box key={post.id} mt="8">
+                  {image && <PosterImage src={createURLFromIPFSHash(image)} />}
+                  {/* @TODO Restore replies */ }
+                  {/* {replyTo &&
+                      replyTo.posts[0] &&
+                      replyTo.from && (
+                        <Box>
+                          <Text fontSize="sm" opacity="0.9">
+                            Reply to{' '}
+                            {parsePost(post.action.replyTo.posts[0]).content} from{' '}
+                            {replyTo.from.id}
+                          </Text>
+                        </Box>
+                      )} */}
                   <Flex alignItems="baseline">
                     <Flex>
-                      <ENS props={{ mr: '1' }} address={from.id} />·
+                      <ENS props={{ mr: '1' }} address={proxy ? proxy.from : from.id} />·
+                      { proxy && <Tag ml="1">Proxied</Tag>}
                       <Link
                         isExternal
                         href={`${getExplorerTransactionLink(
@@ -183,22 +220,23 @@ export const ViewGraph = ({
                       </Link>
                     </Flex>
                   </Flex>
-                  <Text>{postContent}</Text>
-                  {account && false && ( // @TODO: Disabling reply functionality for now.
-                    <ChatIcon
-                      cursor="pointer"
-                      onClick={() => {
-                        dispatch({
-                          type: 'SET_REPLY_TO_CONTENT',
-                          replyToContent: postContent,
-                        })
-                        dispatch({
-                          type: 'SET_REPLY_TO_CONTENT_ID',
-                          replyToContentId: id,
-                        })
-                      }}
-                    />
-                  )}
+                  <Text>{content}</Text>
+                  {account &&
+                    false && ( // @TODO: Disabling reply functionality for now.
+                      <ChatIcon
+                        cursor="pointer"
+                        onClick={() => {
+                          dispatch({
+                            type: 'SET_REPLY_TO_CONTENT',
+                            replyToContent: content,
+                          })
+                          dispatch({
+                            type: 'SET_REPLY_TO_CONTENT_ID',
+                            replyToContentId: id,
+                          })
+                        }}
+                      />
+                    )}
                 </Box>
               )
             })
