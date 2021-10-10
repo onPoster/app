@@ -172,7 +172,7 @@ export async function setPostContent(
 
       // See https://github.com/ETHPoster/proxy,
       // Address deployed from 0x9101A466Dc1acb6D0a538D207E8D3e3D45AD0c85
-      const PROXYPOSTERADDRESS = '0x41622a156AC81Ac830032de597aAe5b53e359898'
+      const PROXYPOSTERADDRESS = '0xC8734BFb4bd362fcf617cE4cC4DDb2D0C46EE695'
       const proxyPosterABI = [{ "inputs": [{ "internalType": "address", "name": "_posterAddress", "type": "address" }, { "internalType": "address", "name": "_trustedForwarder", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [{ "internalType": "address", "name": "forwarder", "type": "address" }], "name": "isTrustedForwarder", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "content", "type": "string" }], "name": "post", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "posterContract", "outputs": [{ "internalType": "contract IPoster", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }]
 
       // Replaced by gasless tx

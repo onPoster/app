@@ -108,7 +108,11 @@ export const ViewGraph = ({
   const tryClientSideJSONParsing = (rawContent): string => {
     try {
       // NB: Trying to import generated schema (assembly script) to typescript will fail.
-      const action: { text: string } = JSON.parse(rawContent)
+      const action: { text: string } | { text: { text: string }} = JSON.parse(rawContent)
+
+      if (typeof action.text == 'object') {
+        return action.text.text;
+      }
       return action.text
     } catch {
       return rawContent
@@ -146,7 +150,7 @@ export const ViewGraph = ({
             return posts.map((post) => {
               const postContent = getPostContent(post)
               return (
-                <Box key={post.id} mt="8">
+                postContent && <Box key={post.id} mt="8">
                   {post.action.image && (
                     <PosterImage
                       src={createURLFromIPFSHash(post.action.image)}
@@ -180,7 +184,7 @@ export const ViewGraph = ({
                     </Flex>
                   </Flex>
                   <Text>{postContent}</Text>
-                  {account && (
+                  {account && false && ( // @TODO: Disabling reply functionality for now.
                     <ChatIcon
                       cursor="pointer"
                       onClick={() => {
