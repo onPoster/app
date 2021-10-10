@@ -1,6 +1,7 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Poster",
+    "short_name": "Poster",
+    "description": "A general purpose decentralized social network.",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
@@ -15,5 +16,6 @@
     ],
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
-    "display": "standalone"
+    "display": "standalone",
+    "skylink": "AQBnW6YFaScvJblSuzIhECJ8K5jJol2WkwT8-2a4fs1jGQ"
 }

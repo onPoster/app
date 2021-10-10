@@ -1,9 +1,21 @@
-{  
+{
   "name": "Poster",
   "short_name": "Poster",
-  "theme_color": "#002B36",
-  "background_color": "#002B36",
-  "display": "browser",
-  "scope": "/",
-  "start_url": "/"
+  "description": "A general purpose decentralized social network.",
+  "icons": [
+      {
+          "src": "/android-chrome-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+      },
+      {
+          "src": "/android-chrome-384x384.png",
+          "sizes": "384x384",
+          "type": "image/png"
+      }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "skylink": "AQBnW6YFaScvJblSuzIhECJ8K5jJol2WkwT8-2a4fs1jGQ"
 }
