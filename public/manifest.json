@@ -1,0 +1,9 @@
+{  
+  "name": "Poster",
+  "short_name": "Poster",
+  "theme_color": "#002B36",
+  "background_color": "#002B36",
+  "display": "browser",
+  "scope": "/",
+  "start_url": "/"
+}
