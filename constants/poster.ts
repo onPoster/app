@@ -1,4 +1,4 @@
-import { ChainId } from "@usedapp/core"
+import { ChainId, getChainName } from "@usedapp/core"
 import { ETHEREUM_PROVIDERS } from "./ethereum"
 
 const POSTER_SUBGRAPH_URL_GOERLI = `https://api.thegraph.com/subgraphs/name/jjperezaguinaga/poster-goerli`
@@ -6,6 +6,7 @@ const POSTER_SUBGRAPH_URL_POLYGON = 'https://api.thegraph.com/subgraphs/name/jjp
 const POSTER_SUBGRAPH_URL_XDAI = 'https://api.thegraph.com/subgraphs/name/jjperezaguinaga/poster-xdai'
 
 export const POSTER_DEFAULT_CHAIN_ID = ChainId.xDai
+export const POSTER_DEFAULT_NETWORK_NAME = getChainName(POSTER_DEFAULT_CHAIN_ID)
 export const POSTER_CONTRACT_ADDRESS = '0x000000000000cd17345801aa8147b8D3950260FF'
 
 export const POSTER_SUBGRAPH_URLS_BY_CHAIN_ID_MAP = {

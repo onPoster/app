@@ -2,7 +2,7 @@ import { INFURA_ID } from "../constants/ethereum"
 
 // @TODO Fetch these values directly from package
 export const POSTER_CONTRACT_VERSION = 'v6'
-export const POSTER_APP_VERSION = '0.1.0'
+export const POSTER_APP_VERSION = process.env.NEXT_PUBLIC_POSTER_APP_VERSION || 'undefined'
 
 // NB: Since the application is entirely client side, it makes not much
 // sense to hide it as an environment variable.

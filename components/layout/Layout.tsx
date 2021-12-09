@@ -8,14 +8,16 @@ import {
   Flex,
   Link,
   SimpleGrid,
+  Grid,
   Tag,
   Text,
+  GridItem,
 } from '@chakra-ui/react'
 import {
-  getChainName,
   ChainId,
   useNotifications,
   useEthers,
+  shortenAddress,
 } from '@usedapp/core'
 import React from 'react'
 import { Biconomy } from '@biconomy/mexa'
@@ -23,15 +25,14 @@ import { providers } from 'ethers'
 import { ETHEREUM_PROVIDERS } from '../../constants/ethereum'
 import { POSTER_APP_VERSION } from '../../lib/constants'
 import {
-  POSTER_DEFAULT_CHAIN_ID,
   POSTER_CONTRACT_ADDRESS,
+  POSTER_DEFAULT_NETWORK_NAME,
 } from '../../constants/poster'
 import ConnectWallet from '../ConnectWallet'
 import Head, { MetaProps } from './Head'
 import { Headline } from '../atoms/Headline'
 import { Account } from '../atoms/Account'
 import { truncateHash } from '../../lib/helpers'
-import { GitHubIcon } from '../atoms/GitHubIcon'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { ActionType } from '../../lib/reducers'
 import { useEffect } from 'react'
@@ -70,11 +71,11 @@ const Layout = ({
   customMeta,
   dispatch,
 }: LayoutProps): JSX.Element => {
-  const { account, chainId, library } = useEthers()
+  const { account, library } = useEthers()
   const { notifications } = useNotifications()
 
   useEffect(() => {
-    const loadBiconomy = async() => {
+    const loadBiconomy = async () => {
       const biconomy = new Biconomy(
         new providers.JsonRpcProvider(ETHEREUM_PROVIDERS[ChainId.Polygon]),
         { apiKey: process.env.NEXT_PUBLIC_BICONOMY_KEY, walletProvider: library.provider }
@@ -137,68 +138,71 @@ const Layout = ({
       </main>
       <footer>
         <Container mt="8" py="8" maxWidth="container.xl">
-          <SimpleGrid
-            columns={[1, 1, 1, 2]}
-            alignItems="center"
+          <Grid
+            templateColumns='repeat(6, 1fr)'
+            alignItems="end"
             justifyContent="space-between"
           >
-            <Box>
-              Built by{' '}
-              <Link href="https://twitter.com/auryn_macmillan">
-                <Text display="inline" fontWeight="700">
-                  Auryn Macmillan
-                </Text>
-              </Link>{' '}
-              and{' '}
-              <Link href="https://twitter.com/jjperezaguinaga">
-                <Text display="inline" fontWeight="700">
-                  Jose Aguinaga
-                </Text>
-              </Link>
-              .
-            </Box>
-            <SimpleGrid
-              columns={[1, 1, 3, 3]}
-              gap="4"
-              mt="4"
-              justifyContent="flex-end"
-              alignContent="center"
-              alignItems="center"
-              flexFlow={{ base: 'column', md: 'row' }}
-            >
-              <Flex alignItems="baseline" w="100%" justifyContent="center">
-                <GitHubIcon />
-                <Link
-                  mx="2"
-                  href="https://github.com/ETHPoster/app/issues/new"
-                  isExternal
-                >
-                  Suggest feature
-                </Link>
-                <ExternalLinkIcon />
-              </Flex>
+            <GridItem colSpan={[6, 2, 2, 2]}>
               <Flex w="100%" justifyContent="center">
-                <Text>App</Text>
-                <Tag ml="5px">{POSTER_APP_VERSION}</Tag>
-              </Flex>
-              <Flex w="100%" justifyContent="space-around">
-                <Link
-                  href={`https://blockscan.com/address/${POSTER_CONTRACT_ADDRESS}`}
-                  isExternal
-                >
-                  <Text textDecoration="underline">Contract</Text>
+                Built by
+                <Link mx="1" href="https://twitter.com/auryn_macmillan">
+                  <Text display="inline" fontWeight="700">
+                    Auryn Macmillan
+                  </Text>
                 </Link>
-                <Link
-                  href={`https://thegraph.com/legacy-explorer/subgraph/jjperezaguinaga/poster-${getChainName(
-                    chainId || POSTER_DEFAULT_CHAIN_ID
-                  ).toLowerCase()}`}
-                  isExternal
-                >
-                  <Text textDecoration="underline">Subgraph</Text>
+                and
+                <Link ml="1" href="https://twitter.com/jjperezaguinaga">
+                  <Text display="inline" fontWeight="700">
+                    Jose Aguinaga
+                  </Text>
                 </Link>
+                .
               </Flex>
-            </SimpleGrid>
-          </SimpleGrid>
+            </GridItem>
+            <GridItem colSpan={[6, 4, 4, 4]}>
+              <SimpleGrid
+                columns={[1, 1, 3, 3]}
+                gap="4"
+                mt="4"
+                justifyContent="flex-end"
+                alignContent="center"
+                alignItems="center"
+                flexFlow={{ base: 'column', md: 'row' }}
+              >
+                <Flex w="100%" justifyContent="center">
+                  <Link
+                    mx="2"
+                    href="https://github.com/onPoster/app"
+                    isExternal
+                  >App
+                    <ExternalLinkIcon ml="1" />
+                  </Link>
+                  <Tag ml="5px">{POSTER_APP_VERSION}</Tag>
+                </Flex>
+                <Flex w="100%" justifyContent="center">
+                  <Link
+                    mx="2"
+                    href="https://github.com/onPoster/contract"
+                    isExternal
+                  >Contract
+                    <ExternalLinkIcon ml="1" />
+                  </Link>
+                  <Tag ml="5px">{shortenAddress(POSTER_CONTRACT_ADDRESS)}</Tag>
+                </Flex>
+                <Flex w="100%" justifyContent="center">
+                  <Link
+                    mx="2"
+                    href="https://github.com/onPoster/subgraph"
+                    isExternal
+                  >Subgraph
+                    <ExternalLinkIcon ml="1" />
+                  </Link>
+                  <Tag ml="5px">{POSTER_DEFAULT_NETWORK_NAME}</Tag>
+                </Flex>
+              </SimpleGrid>
+            </GridItem>
+          </Grid>
         </Container>
       </footer>
     </>
