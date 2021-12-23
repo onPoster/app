@@ -15,13 +15,12 @@ const config: Config = {
     [ChainId.Goerli]: ETHEREUM_PROVIDERS[ChainId.Goerli],
     [ChainId.Polygon]: ETHEREUM_PROVIDERS[ChainId.Polygon],
     [ChainId.xDai]: ETHEREUM_PROVIDERS[ChainId.xDai],
-    [ChainId.Hardhat]: 'http://localhost:8555',
-    [ChainId.Localhost]: 'http://localhost:8545',
+    [ChainId.Hardhat]: ETHEREUM_PROVIDERS[ChainId.Hardhat],
   },
   supportedChains: [
     ChainId.Goerli,
     ChainId.Polygon,
-    ChainId.Localhost,
+    ChainId.xDai,
     ChainId.Hardhat,
   ],
   multicallAddresses: {

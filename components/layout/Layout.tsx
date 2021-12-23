@@ -88,7 +88,7 @@ const Layout = ({
         biconomy,
       })
     }
-    library && loadBiconomy()
+    library && process.env.NEXT_PUBLIC_BICONOMY_KEY && loadBiconomy()
   }, [library])
 
   return (
