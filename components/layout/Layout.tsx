@@ -27,6 +27,7 @@ import { POSTER_APP_VERSION } from '../../lib/constants'
 import {
   POSTER_CONTRACT_ADDRESS,
   POSTER_DEFAULT_NETWORK_NAME,
+  POSTER_ENVIRONMENT,
 } from '../../constants/poster'
 import ConnectWallet from '../ConnectWallet'
 import Head, { MetaProps } from './Head'
@@ -36,6 +37,7 @@ import { truncateHash } from '../../lib/helpers'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { ActionType } from '../../lib/reducers'
 import { useEffect } from 'react'
+import { DevHelp } from '../atoms/DevHelp'
 
 // Extends `window` to add `ethereum`.
 declare global {
@@ -144,7 +146,7 @@ const Layout = ({
             justifyContent="space-between"
           >
             <GridItem colSpan={[6, 2, 2, 2]}>
-              <Flex w="100%" justifyContent="center">
+              <Flex w="100%" justifyContent="left">
                 Built by
                 <Link mx="1" href="https://twitter.com/auryn_macmillan">
                   <Text display="inline" fontWeight="700">
@@ -203,6 +205,7 @@ const Layout = ({
               </SimpleGrid>
             </GridItem>
           </Grid>
+          { POSTER_ENVIRONMENT != 'production' && <DevHelp /> }
         </Container>
       </footer>
     </>

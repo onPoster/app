@@ -31,7 +31,6 @@ const config: Config = {
 
 const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   return (
-    
       <DAppProvider config={config}>
         <ChakraProvider>
           <Component {...pageProps} />

@@ -5,6 +5,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "POSTER_APP_VERSION=$(git rev-parse --short HEAD) next dev",
+    "dev:local": "POSTER_CHAIN=31337 POSTER_APP_VERSION=$(git rev-parse --short HEAD) next dev",
     "build": "POSTER_APP_VERSION=$(git rev-parse --short HEAD) next build",
     "start": "next start",
     "export": "next export",
