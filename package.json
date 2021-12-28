@@ -39,7 +39,7 @@
     "@ethposter/subgraph": "https://github.com/onPoster/subgraph.git#c0f6db7fcf10429975a8c87ef0de91f92efe7d4b",
     "@usedapp/core": "^0.4.1",
     "@web3-react/walletconnect-connector": "^6.2.0",
-    "Poster": "https://github.com/ETHPoster/contract.git#bf5a79e637226eb2b176c04813224a2413ff5213",
+    "Poster": "https://github.com/ETHPoster/contract.git#v7.0.0",
     "blockies-ts": "^1.0.0",
     "deepmerge": "^4.2.2",
     "ethers": "^5.0.32",

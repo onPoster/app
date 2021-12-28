@@ -120,7 +120,7 @@ export const ViewGraph = ({
 
       const filter = {
         address: POSTER_CONTRACT_ADDRESS,
-        topics: [ethers.utils.id('NewPost(address,string)')],
+        topics: [ethers.utils.id('NewPost(address,string,string)')],
       }
 
       posterContract.on(filter, delayedEventUpdate)
