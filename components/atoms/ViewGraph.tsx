@@ -120,7 +120,7 @@ export const ViewGraph = ({
 
       const filter = {
         address: POSTER_CONTRACT_ADDRESS,
-        topics: [ethers.utils.id('NewPost(address,string)')],
+        topics: [ethers.utils.id('NewPost(address,string,string)')],
       }
 
       posterContract.on(filter, delayedEventUpdate)
@@ -174,7 +174,7 @@ export const ViewGraph = ({
       {error && (
         <Alert status="error">
           <AlertIcon />
-          There was an error processing your request
+          Poster wasn’t able to query the subgraph for some reason. Please check the logs.
         </Alert>
       )}
       {!loading && !error && transactions.length === 0 ? (

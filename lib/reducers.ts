@@ -1,4 +1,5 @@
 import { Web3Provider } from '@ethersproject/providers'
+import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
 import { ethers, PopulatedTransaction } from 'ethers'
 import { Biconomy } from '@biconomy/mexa'
 import { Poster as PosterType } from 'Poster/typechain/Poster'
@@ -175,13 +176,23 @@ export async function setPostContent(
       const PROXYPOSTERADDRESS = '0xC8734BFb4bd362fcf617cE4cC4DDb2D0C46EE695'
       const proxyPosterABI = [{ "inputs": [{ "internalType": "address", "name": "_posterAddress", "type": "address" }, { "internalType": "address", "name": "_trustedForwarder", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [{ "internalType": "address", "name": "forwarder", "type": "address" }], "name": "isTrustedForwarder", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "content", "type": "string" }], "name": "post", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "posterContract", "outputs": [{ "internalType": "contract IPoster", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }]
 
-      // Replaced by gasless tx
-      const contract = new ethers.Contract(
+      const usesSponsoredGas = Boolean(state.biconomy)
+
+      const contract = usesSponsoredGas ?
+      // If it’s sponsored, we'll call Proxy Poster and not Poster directly,
+      new ethers.Contract(
         PROXYPOSTERADDRESS,
         proxyPosterABI,
         state.biconomy ?
           state.biconomy.getSignerByAddress(address) : signer
+      ) as unknown as PosterType :
+      // otherwise, we'll call Poster
+      new ethers.Contract(
+        PosterContractAddress,
+        Poster.abi,
+        signer
       ) as unknown as PosterType
+
 
       // @TODO: For now, replies do not have images.
       const post = state.replyToContentId ?
@@ -190,14 +201,17 @@ export async function setPostContent(
           PosterSchema.createNewPostWithImage(state.inputValue, state.previewImageCID) :
           PosterSchema.createNewPost(state.inputValue)
 
+      usesSponsoredGas ?
       // Replacing for gas-less transaction
       await gasLessPost(
         PROXYPOSTERADDRESS,
         await signer.getAddress(),
         state,
-        contract.populateTransaction.post(post),
+        contract.populateTransaction.post(post, "post"),
         dispatch
-      )
+      ) :
+      // Using a normal post.
+      await (await contract.post(post, "post")).wait()
 
       dispatch({
         type: 'SET_LOADING',
@@ -211,10 +225,12 @@ export async function setPostContent(
         type: 'SET_CHARACTERS_AMOUNT',
         charactersAmount: 0
       })
-      dispatch({
-        type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING',
-        isReloadIntervalLoading: true
-      })
+      // @TODO: Decide to remove this altogether to only show upon
+      // event detection via the additional RPC provider.
+      // dispatch({
+      //   type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING',
+      //   isReloadIntervalLoading: true
+      // })
     } catch (e) {
       dispatch({
         type: 'SET_LOADING',
