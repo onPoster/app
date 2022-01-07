@@ -19,6 +19,7 @@ type StateType = {
   replyToContentId: string
   previewImageCID: string
   biconomy: Biconomy
+  previewImageError: string
 }
 export type ActionType =
   | {
@@ -54,6 +55,10 @@ export type ActionType =
     previewImageCID: StateType['previewImageCID']
   }
   | {
+    type: 'SET_IMAGE_UPLOAD_ERROR'
+    previewImageError: StateType['previewImageError']
+  }
+  | {
     type: 'SET_BICONOMY'
     biconomy: StateType['biconomy']
   }
@@ -71,6 +76,7 @@ export const initialState: StateType = {
   replyToContent: '',
   replyToContentId: '',
   previewImageCID: '',
+  previewImageError: '',
   biconomy: null
 }
 
@@ -115,6 +121,11 @@ export function reducer(state: StateType, action: ActionType): StateType {
       return {
         ...state,
         previewImageCID: action.previewImageCID
+      }
+    case 'SET_IMAGE_UPLOAD_ERROR':
+      return {
+        ...state,
+        previewImageError: action.previewImageError
       }
     case 'SET_BICONOMY':
       return {
