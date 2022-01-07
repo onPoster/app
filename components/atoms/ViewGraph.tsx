@@ -47,6 +47,10 @@ type PIP1Post = {
   replyTo?: PIP1Post_Reply
 }
 
+type LegacyPIP1Post = {
+  post: PIP1Post
+}
+
 type PIP2Post = {
   type: 'microblog'
   from: string
@@ -137,8 +141,15 @@ export const ViewGraph = ({
 
   const parsePost = (post): ParsedPost => {
     try {
-      const parsedPost: PIP1Post | PIP2Post = JSON.parse(post.rawContent)
-      if (typeof parsedPost.text == 'object') {
+      const parsedPost: LegacyPIP1Post | PIP1Post | PIP2Post = JSON.parse(post.rawContent)
+      if ('post' in parsedPost) {
+        const castedPost = parsedPost as LegacyPIP1Post
+        return {
+          content: castedPost.post.text,
+          image: castedPost.post.image,
+          replyTo: castedPost.post.replyTo
+        }
+      } else if (typeof parsedPost.text == 'object') {
         const castedPost = parsedPost as PIP2Post
         return {
           content: castedPost.text.text,
