@@ -1893,9 +1893,9 @@
     "@ethersproject/properties" "^5.4.0"
     "@ethersproject/strings" "^5.4.0"
 
-"@ethposter/subgraph@https://github.com/onPoster/subgraph.git#c0f6db7fcf10429975a8c87ef0de91f92efe7d4b":
+"@ethposter/subgraph@https://github.com/onPoster/subgraph.git#0.1.0":
   version "0.1.0"
-  resolved "https://github.com/onPoster/subgraph.git#c0f6db7fcf10429975a8c87ef0de91f92efe7d4b"
+  resolved "https://github.com/onPoster/subgraph.git#19261b28b9bb04546b8fd3ebed0afb41566a6502"
   dependencies:
     "@graphprotocol/graph-cli" "0.21.1"
     "@graphprotocol/graph-ts" "0.20.0"
@@ -3235,9 +3235,9 @@ JSONStream@^1.3.5:
     jsonparse "^1.2.0"
     through ">=2.2.7 <3"
 
-"Poster@https://github.com/ETHPoster/contract.git#v7.0.0":
+"Poster@https://github.com/onPoster/contract.git#v7.0.0":
   version "7.0.0"
-  resolved "https://github.com/ETHPoster/contract.git#b96c41057bf2afad6c7826dddaea1c89bd142d2b"
+  resolved "https://github.com/onPoster/contract.git#b96c41057bf2afad6c7826dddaea1c89bd142d2b"
   dependencies:
     "@nomiclabs/hardhat-ethers" "^2.0.2"
     "@nomiclabs/hardhat-etherscan" "^2.1.4"
