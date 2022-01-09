@@ -67,6 +67,9 @@ function HomeIndex(): JSX.Element {
             {account && state.replyToContentId && (
               <Text>You are replying to: {state.replyToContent}</Text>
             )}
+            {state.previewImageError && (
+              <Text>Error trying to upload image: {state.previewImageError}</Text>
+            )}
             <InputGroup size="sm">
               <Textarea
                 bg={POSTER_UI_BG_COLOR_MAP.textArea[colorMode]}

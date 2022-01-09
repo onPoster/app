@@ -1,7 +1,8 @@
 import { ChainId } from "@usedapp/core";
 
 export const INFURA_ID = 'b7f7038518824df4bf3011a0e94bc6a8'
-export const DEFAULT_IPFS_GATEWAY = 'https://ipfs.infura.io/ipfs/'
+export const DEFAULT_IPFS_API = process.env.NODE_ENV != 'production' ? 'http://localhost:5001' : 'https://ipfs.infura.io:5001'
+export const DEFAULT_IPFS_GATEWAY = process.env.NODE_ENV != 'production' ? 'http://localhost:8080' : 'https://ipfs.infura.io'
 
 export const ETHEREUM_PROVIDERS = {
   [ChainId.Goerli]: `https://goerli.infura.io/v3/${INFURA_ID}`,
