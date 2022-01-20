@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react'
 import blockies from 'blockies-ts'
 import { useEthers } from '@usedapp/core'
-import { truncateHash } from '../../lib/helpers'
+import { truncate } from '../../lib/helpers'
 export const Account = () => {
   const { account, deactivate } = useEthers()
   let blockieImageSrc
@@ -27,7 +27,7 @@ export const Account = () => {
       <Image ml="4" src={blockieImageSrc} alt="blockie" />
       <Menu placement="bottom-end">
         <MenuButton as={Button} ml="4" w={{ base: "200%", md: "auto" }}>
-          {truncateHash(account)}
+          {truncate(account)}
         </MenuButton>
         <MenuList>
           <MenuItem

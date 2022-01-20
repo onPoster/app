@@ -33,7 +33,7 @@ import ConnectWallet from '../ConnectWallet'
 import Head, { MetaProps } from './Head'
 import { Headline } from '../atoms/Headline'
 import { Account } from '../atoms/Account'
-import { truncateHash } from '../../lib/helpers'
+import { truncate } from '../../lib/helpers'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { ActionType } from '../../lib/reducers'
 import { useEffect } from 'react'
@@ -130,7 +130,7 @@ const Layout = ({
                   </AlertTitle>
                   <AlertDescription overflow="hidden">
                     Transaction Hash:{' '}
-                    {truncateHash(notification.transaction.hash, 61)}
+                    {truncate(notification.transaction.hash, 61)}
                   </AlertDescription>
                 </Box>
               </Alert>
