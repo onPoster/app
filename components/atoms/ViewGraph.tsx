@@ -8,7 +8,6 @@ import {
   Text,
   Flex,
   Link,
-  Tag,
 } from '@chakra-ui/react'
 import { getExplorerTransactionLink, useEthers } from '@usedapp/core'
 import { Dispatch, useEffect } from 'react'
@@ -47,23 +46,10 @@ type PIP1Post = {
   replyTo?: PIP1Post_Reply
 }
 
-type LegacyPIP1Post = {
-  post: PIP1Post
-}
-
-type PIP2Post = {
-  type: 'microblog'
-  from: string
-  text: PIP1Post
-}
-
-type ParsedPost = {
-  content: string
-  proxy?: {
-    from: string
-  }
-  image?: string
-  replyTo?: PIP1Post_Reply
+type Post = {
+  id: string,
+  rawContent: string,
+  action: PIP1Post
 }
 
 export const ViewGraph = ({
@@ -139,38 +125,20 @@ export const ViewGraph = ({
   // @TODO Add actual accounts & transactions types
   const transactions = (data && data.transactions) || []
 
-  const parsePost = (post): ParsedPost => {
+  const parsePost = (post: Post): PIP1Post => {
     try {
-      const parsedPost: LegacyPIP1Post | PIP1Post | PIP2Post = JSON.parse(
-        post.rawContent
-      )
-      if ('post' in parsedPost) {
-        const castedPost = parsedPost as LegacyPIP1Post
-        return {
-          content: castedPost.post.text,
-          image: castedPost.post.image,
-          replyTo: castedPost.post.replyTo,
-        }
-      } else if (typeof parsedPost.text == 'object') {
-        const castedPost = parsedPost as PIP2Post
-        return {
-          content: castedPost.text.text,
-          proxy: { from: castedPost.from },
-          image: castedPost.text.image,
-          replyTo: castedPost.text.replyTo,
-        }
+      const action = post.action;
+      if ('type' in action && action.type == 'microblog') {
+        return action;
       } else {
-        const castedPost = parsedPost as PIP1Post
-        return {
-          content: castedPost.text,
-          image: castedPost.image,
-          replyTo: castedPost.replyTo,
-        }
+        const parsedPost: PIP1Post = JSON.parse(post.rawContent)
+        return parsedPost;
       }
     } catch (err) {
-      console.error('Error parsing the posted content.')
+      console.error('Error parsing the rawContent of the post.')
       return {
-        content: post.action.text,
+        type: 'microblog',
+        text: post.rawContent
       }
     }
   }
@@ -201,9 +169,9 @@ export const ViewGraph = ({
           .map(({ id, from, posts, timestamp }) => {
             return posts.map((post) => {
               const parsedPost = parsePost(post)
-              const { content, proxy, image } = parsedPost
+              const { text, image } = parsedPost
               return (
-                content && (
+                text && (
                   <Box key={post.id} mt="8">
                     {image && (
                       <PosterImage src={createURLFromIPFSHash(image)} />
@@ -224,9 +192,8 @@ export const ViewGraph = ({
                       <Flex>
                         <ENS
                           props={{ mr: '1' }}
-                          address={proxy ? proxy.from : from.id}
+                          address={from.id}
                         />
-                        ·{proxy && <Tag ml="1">Proxied</Tag>}
                         <Link
                           isExternal
                           href={`${getExplorerTransactionLink(
@@ -240,7 +207,7 @@ export const ViewGraph = ({
                         </Link>
                       </Flex>
                     </Flex>
-                    <Text>{content}</Text>
+                    <Text>{text}</Text>
                     {account &&
                       false && ( // @TODO: Disabling reply functionality for now.
                         <ChatIcon
@@ -248,7 +215,7 @@ export const ViewGraph = ({
                           onClick={() => {
                             dispatch({
                               type: 'SET_REPLY_TO_CONTENT',
-                              replyToContent: content,
+                              replyToContent: text,
                             })
                             dispatch({
                               type: 'SET_REPLY_TO_CONTENT_ID',
