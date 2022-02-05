@@ -5,12 +5,12 @@
 ██╔═══╝ ██║   ██║╚════██║   ██║   ██╔══╝  ██╔══██╗
 ██║     ╚██████╔╝███████║   ██║   ███████╗██║  ██║
 ╚═╝      ╚═════╝ ╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
-    ___              
-   /   |  ____  ____ 
+    ___
+   /   |  ____  ____
   / /| | / __ \/ __ \
  / ___ |/ /_/ / /_/ /
-/_/  |_/ .___/ .___/ 
-      /_/   /_/      
+/_/  |_/ .___/ .___/
+      /_/   /_/
 ```
 
 An app for a ridiculously simple general purpose social media smart contract.
@@ -32,8 +32,8 @@ The Poster smart contract can be found [here](https://github.com/onPoster/contra
 
 `Poster App` is one of other existing apps within the `Poster` ecosystem:
 
-* [Postum](https://github.com/onPoster/postum). A forum-like alternative to Discourse powered by `Poster`.
-* [Proxy Poster](https://github.com/onPoster/proxy). A meta-transaction layer to allow gas-less posts on top of `Poster` using `EIP-2771`.
+- [Postum](https://github.com/onPoster/postum). A forum-like alternative to Discourse powered by `Poster`.
+- [Proxy Poster](https://github.com/onPoster/proxy). A meta-transaction layer to allow gas-less posts on top of `Poster` using `EIP-2771`.
 
 # Getting started
 

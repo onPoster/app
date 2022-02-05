@@ -1,4 +1,3 @@
-
 import { useColorMode, Switch } from '@chakra-ui/react'
 
 export const DarkModeSwitch = (): JSX.Element => {

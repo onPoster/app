@@ -13,112 +13,109 @@ import {
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
-import { BytesLike } from "@ethersproject/bytes";
-import { Listener, Provider } from "@ethersproject/providers";
-import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+} from 'ethers'
+import { BytesLike } from '@ethersproject/bytes'
+import { Listener, Provider } from '@ethersproject/providers'
+import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi'
+import { TypedEventFilter, TypedEvent, TypedListener } from './commons'
 
 interface YourContractInterface extends ethers.utils.Interface {
   functions: {
-    "greeting()": FunctionFragment;
-    "setGreeting(string)": FunctionFragment;
-  };
+    'greeting()': FunctionFragment
+    'setGreeting(string)': FunctionFragment
+  }
 
-  encodeFunctionData(functionFragment: "greeting", values?: undefined): string;
-  encodeFunctionData(functionFragment: "setGreeting", values: [string]): string;
+  encodeFunctionData(functionFragment: 'greeting', values?: undefined): string
+  encodeFunctionData(functionFragment: 'setGreeting', values: [string]): string
 
-  decodeFunctionResult(functionFragment: "greeting", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setGreeting",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: 'greeting', data: BytesLike): Result
+  decodeFunctionResult(functionFragment: 'setGreeting', data: BytesLike): Result
 
-  events: {};
+  events: {}
 }
 
 export class YourContract extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this
+  attach(addressOrName: string): this
+  deployed(): Promise<this>
 
   listeners<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+  ): Array<TypedListener<EventArgsArray, EventArgsObject>>
   off<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
     listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
+  ): this
   on<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
     listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
+  ): this
   once<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
     listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
+  ): this
   removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
     listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
+  ): this
   removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
+  ): this
 
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
+  listeners(eventName?: string): Array<Listener>
+  off(eventName: string, listener: Listener): this
+  on(eventName: string, listener: Listener): this
+  once(eventName: string, listener: Listener): this
+  removeListener(eventName: string, listener: Listener): this
+  removeAllListeners(eventName?: string): this
 
   queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
     event: TypedEventFilter<EventArgsArray, EventArgsObject>,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>
 
-  interface: YourContractInterface;
+  interface: YourContractInterface
 
   functions: {
-    greeting(overrides?: CallOverrides): Promise<[string]>;
+    greeting(overrides?: CallOverrides): Promise<[string]>
 
     setGreeting(
       _greeting: string,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
+    ): Promise<ContractTransaction>
+  }
 
-  greeting(overrides?: CallOverrides): Promise<string>;
+  greeting(overrides?: CallOverrides): Promise<string>
 
   setGreeting(
     _greeting: string,
     overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  ): Promise<ContractTransaction>
 
   callStatic: {
-    greeting(overrides?: CallOverrides): Promise<string>;
+    greeting(overrides?: CallOverrides): Promise<string>
 
-    setGreeting(_greeting: string, overrides?: CallOverrides): Promise<void>;
-  };
+    setGreeting(_greeting: string, overrides?: CallOverrides): Promise<void>
+  }
 
-  filters: {};
+  filters: {}
 
   estimateGas: {
-    greeting(overrides?: CallOverrides): Promise<BigNumber>;
+    greeting(overrides?: CallOverrides): Promise<BigNumber>
 
     setGreeting(
       _greeting: string,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
+    ): Promise<BigNumber>
+  }
 
   populateTransaction: {
-    greeting(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    greeting(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
     setGreeting(
       _greeting: string,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+    ): Promise<PopulatedTransaction>
+  }
 }

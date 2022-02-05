@@ -27,8 +27,7 @@ export const DevHelp = (): JSX.Element => {
         >
           <Flex justifyContent="space-between">
             <Text fontFamily={'mono'} fontSize={'xs'}>
-              <b>Default Network</b>{' '}
-              {POSTER_DEFAULT_NETWORK}
+              <b>Default Network</b> {POSTER_DEFAULT_NETWORK}
             </Text>
           </Flex>
           <Flex justifyContent="left">

@@ -14,15 +14,11 @@ import {
   GridItem,
 } from '@chakra-ui/react'
 import {
-  ChainId,
   useNotifications,
   useEthers,
   shortenAddress,
 } from '@usedapp/core'
 import React from 'react'
-import { Biconomy } from '@biconomy/mexa'
-import { providers } from 'ethers'
-import { ETHEREUM_PROVIDERS } from '../../constants/ethereum'
 import { POSTER_APP_VERSION } from '../../lib/constants'
 import {
   POSTER_CONTRACT_ADDRESS,
@@ -36,7 +32,6 @@ import { Account } from '../atoms/Account'
 import { truncate } from '../../lib/helpers'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { ActionType } from '../../lib/reducers'
-import { useEffect } from 'react'
 import { DevHelp } from '../atoms/DevHelp'
 
 // Extends `window` to add `ethereum`.
@@ -71,25 +66,9 @@ interface LayoutProps {
 const Layout = ({
   children,
   customMeta,
-  dispatch,
 }: LayoutProps): JSX.Element => {
-  const { account, library } = useEthers()
+  const { account } = useEthers()
   const { notifications } = useNotifications()
-
-  useEffect(() => {
-    const loadBiconomy = async () => {
-      const biconomy = new Biconomy(
-        new providers.JsonRpcProvider(ETHEREUM_PROVIDERS[ChainId.Polygon]),
-        { apiKey: process.env.NEXT_PUBLIC_BICONOMY_KEY, walletProvider: library.provider }
-      )
-      await new Promise((resolve, reject) => biconomy.onEvent(biconomy.READY, resolve).onEvent(biconomy.ERROR, reject))
-      dispatch({
-        type: 'SET_BICONOMY',
-        biconomy,
-      })
-    }
-    library && process.env.NEXT_PUBLIC_BICONOMY_KEY && loadBiconomy()
-  }, [library])
 
   return (
     <>
@@ -141,7 +120,7 @@ const Layout = ({
       <footer>
         <Container mt="8" py="8" maxWidth="container.xl">
           <Grid
-            templateColumns='repeat(6, 1fr)'
+            templateColumns="repeat(6, 1fr)"
             alignItems="end"
             justifyContent="space-between"
           >
@@ -177,7 +156,8 @@ const Layout = ({
                     mx="2"
                     href="https://github.com/onPoster/app"
                     isExternal
-                  >App
+                  >
+                    App
                     <ExternalLinkIcon ml="1" />
                   </Link>
                   <Tag ml="5px">{POSTER_APP_VERSION}</Tag>
@@ -187,7 +167,8 @@ const Layout = ({
                     mx="2"
                     href="https://github.com/onPoster/contract"
                     isExternal
-                  >Contract
+                  >
+                    Contract
                     <ExternalLinkIcon ml="1" />
                   </Link>
                   <Tag ml="5px">{shortenAddress(POSTER_CONTRACT_ADDRESS)}</Tag>
@@ -197,7 +178,8 @@ const Layout = ({
                     mx="2"
                     href="https://github.com/onPoster/subgraph"
                     isExternal
-                  >Subgraph
+                  >
+                    Subgraph
                     <ExternalLinkIcon ml="1" />
                   </Link>
                   <Tag ml="5px">{POSTER_DEFAULT_NETWORK_NAME}</Tag>
@@ -205,7 +187,7 @@ const Layout = ({
               </SimpleGrid>
             </GridItem>
           </Grid>
-          { POSTER_ENVIRONMENT != 'production' && <DevHelp /> }
+          {POSTER_ENVIRONMENT != 'production' && <DevHelp />}
         </Container>
       </footer>
     </>

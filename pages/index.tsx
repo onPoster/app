@@ -36,9 +36,9 @@ import {
 
 function HomeIndex(): JSX.Element {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const {account, chainId, library} = useEthers()
+  const { account, chainId, library } = useEthers()
   const [apolloClient, setApolloClient] = useState()
-  const {colorMode} = useColorMode()
+  const { colorMode } = useColorMode()
 
   useEffect(() => {
     const subgraphURL =
@@ -68,7 +68,9 @@ function HomeIndex(): JSX.Element {
               <Text>You are replying to: {state.replyToContent}</Text>
             )}
             {state.previewImageError && (
-              <Text>Error trying to upload image: {state.previewImageError}</Text>
+              <Text>
+                Error trying to upload image: {state.previewImageError}
+              </Text>
             )}
             <InputGroup size="sm">
               <Textarea

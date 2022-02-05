@@ -141,13 +141,15 @@ export const ViewGraph = ({
 
   const parsePost = (post): ParsedPost => {
     try {
-      const parsedPost: LegacyPIP1Post | PIP1Post | PIP2Post = JSON.parse(post.rawContent)
+      const parsedPost: LegacyPIP1Post | PIP1Post | PIP2Post = JSON.parse(
+        post.rawContent
+      )
       if ('post' in parsedPost) {
         const castedPost = parsedPost as LegacyPIP1Post
         return {
           content: castedPost.post.text,
           image: castedPost.post.image,
-          replyTo: castedPost.post.replyTo
+          replyTo: castedPost.post.replyTo,
         }
       } else if (typeof parsedPost.text == 'object') {
         const castedPost = parsedPost as PIP2Post
@@ -185,7 +187,8 @@ export const ViewGraph = ({
       {error && (
         <Alert status="error">
           <AlertIcon />
-          Poster wasn’t able to query the subgraph for some reason. Please check the logs.
+          Poster wasn’t able to query the subgraph for some reason. Please check
+          the logs.
         </Alert>
       )}
       {!loading && !error && transactions.length === 0 ? (
@@ -200,10 +203,13 @@ export const ViewGraph = ({
               const parsedPost = parsePost(post)
               const { content, proxy, image } = parsedPost
               return (
-                content && <Box key={post.id} mt="8">
-                  {image && <PosterImage src={createURLFromIPFSHash(image)} />}
-                  {/* @TODO Restore replies */ }
-                  {/* {replyTo &&
+                content && (
+                  <Box key={post.id} mt="8">
+                    {image && (
+                      <PosterImage src={createURLFromIPFSHash(image)} />
+                    )}
+                    {/* @TODO Restore replies */}
+                    {/* {replyTo &&
                       replyTo.posts[0] &&
                       replyTo.from && (
                         <Box>
@@ -214,41 +220,45 @@ export const ViewGraph = ({
                           </Text>
                         </Box>
                       )} */}
-                  <Flex alignItems="baseline">
-                    <Flex>
-                      <ENS props={{ mr: '1' }} address={proxy ? proxy.from : from.id} />·
-                      { proxy && <Tag ml="1">Proxied</Tag>}
-                      <Link
-                        isExternal
-                        href={`${getExplorerTransactionLink(
-                          id,
-                          chainId || POSTER_DEFAULT_CHAIN_ID
-                        )}`}
-                      >
-                        <Text mx="1" fontSize="sm" minW="120px">
-                          {format(timestamp * 1000)}
-                        </Text>
-                      </Link>
+                    <Flex alignItems="baseline">
+                      <Flex>
+                        <ENS
+                          props={{ mr: '1' }}
+                          address={proxy ? proxy.from : from.id}
+                        />
+                        ·{proxy && <Tag ml="1">Proxied</Tag>}
+                        <Link
+                          isExternal
+                          href={`${getExplorerTransactionLink(
+                            id,
+                            chainId || POSTER_DEFAULT_CHAIN_ID
+                          )}`}
+                        >
+                          <Text mx="1" fontSize="sm" minW="120px">
+                            {format(timestamp * 1000)}
+                          </Text>
+                        </Link>
+                      </Flex>
                     </Flex>
-                  </Flex>
-                  <Text>{content}</Text>
-                  {account &&
-                    false && ( // @TODO: Disabling reply functionality for now.
-                      <ChatIcon
-                        cursor="pointer"
-                        onClick={() => {
-                          dispatch({
-                            type: 'SET_REPLY_TO_CONTENT',
-                            replyToContent: content,
-                          })
-                          dispatch({
-                            type: 'SET_REPLY_TO_CONTENT_ID',
-                            replyToContentId: id,
-                          })
-                        }}
-                      />
-                    )}
-                </Box>
+                    <Text>{content}</Text>
+                    {account &&
+                      false && ( // @TODO: Disabling reply functionality for now.
+                        <ChatIcon
+                          cursor="pointer"
+                          onClick={() => {
+                            dispatch({
+                              type: 'SET_REPLY_TO_CONTENT',
+                              replyToContent: content,
+                            })
+                            dispatch({
+                              type: 'SET_REPLY_TO_CONTENT_ID',
+                              replyToContentId: id,
+                            })
+                          }}
+                        />
+                      )}
+                  </Box>
+                )
               )
             })
           })
