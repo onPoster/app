@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react'
-export const PosterImage = ({src}: { src: string}): JSX.Element => (
+export const PosterImage = ({ src }: { src: string }): JSX.Element => (
   <Box
     margin="5"
     padding="5"

@@ -28,7 +28,7 @@ export const AddImage = ({
       } catch (error) {
         dispatch({
           type: 'SET_IMAGE_UPLOAD_ERROR',
-          previewImageError: 'Unable to connect to IPFS node.'
+          previewImageError: 'Unable to connect to IPFS node.',
         })
       }
     }

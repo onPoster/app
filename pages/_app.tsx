@@ -1,4 +1,3 @@
-
 import { ChakraProvider } from '@chakra-ui/react'
 import {
   ChainId,
@@ -30,11 +29,11 @@ const config: Config = {
 
 const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   return (
-      <DAppProvider config={config}>
-        <ChakraProvider>
-          <Component {...pageProps} />
-        </ChakraProvider>
-      </DAppProvider>
+    <DAppProvider config={config}>
+      <ChakraProvider>
+        <Component {...pageProps} />
+      </ChakraProvider>
+    </DAppProvider>
   )
 }
 

@@ -22,11 +22,11 @@ export const Account = () => {
       order={[null, null, null, 2]}
       alignItems={'center'}
       justifyContent={['flex-start', null, null, 'flex-end']}
-      w={{ base: "200%", md: "auto" }}
+      w={{ base: '200%', md: 'auto' }}
     >
       <Image ml="4" src={blockieImageSrc} alt="blockie" />
       <Menu placement="bottom-end">
-        <MenuButton as={Button} ml="4" w={{ base: "200%", md: "auto" }}>
+        <MenuButton as={Button} ml="4" w={{ base: '200%', md: 'auto' }}>
           {truncate(account)}
         </MenuButton>
         <MenuList>

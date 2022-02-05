@@ -18,22 +18,31 @@ type newPostWithImage = {
 }
 
 class PosterSchema {
-  static createNewPost = (rawContent: string): string => JSON.stringify({
-    "type": "microblog",
-    "text": rawContent
-  } as newPost)
+  static createNewPost = (rawContent: string): string =>
+    JSON.stringify({
+      type: 'microblog',
+      text: rawContent,
+    } as newPost)
 
-  static createReplyToPost = (rawContent: string, replyToTxId: string): string => JSON.stringify({
-    "type": "microblog",
-    "text": rawContent,
-    "replyTo": replyToTxId
-  } as replyToPost)
+  static createReplyToPost = (
+    rawContent: string,
+    replyToTxId: string
+  ): string =>
+    JSON.stringify({
+      type: 'microblog',
+      text: rawContent,
+      replyTo: replyToTxId,
+    } as replyToPost)
 
-  static createNewPostWithImage = (rawContent: string, ipfsCID: string): string => JSON.stringify({
-    "type": "microblog",
-    "text": rawContent,
-    "image": `ipfs://${ipfsCID}`
-  } as newPostWithImage)
+  static createNewPostWithImage = (
+    rawContent: string,
+    ipfsCID: string
+  ): string =>
+    JSON.stringify({
+      type: 'microblog',
+      text: rawContent,
+      image: `ipfs://${ipfsCID}`,
+    } as newPostWithImage)
 }
 
-export default PosterSchema;
+export default PosterSchema

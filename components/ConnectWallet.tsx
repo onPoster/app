@@ -14,7 +14,6 @@ import { useEthers } from '@usedapp/core'
 import React from 'react'
 import { walletconnect } from '../lib/connectors'
 
-
 function ConnectWallet(): JSX.Element {
   const { activate, activateBrowserWallet } = useEthers()
   const { onOpen, isOpen, onClose } = useDisclosure()

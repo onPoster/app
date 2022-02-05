@@ -15,9 +15,7 @@ function createApolloClient(uri) {
       // Additional fetch() options like `credentials` or `headers`
       credentials: 'same-origin',
     }),
-    cache: new InMemoryCache({
-      
-    }),
+    cache: new InMemoryCache({}),
   })
 }
 
@@ -61,6 +59,6 @@ export function addApolloState(client, pageProps) {
 }
 
 export function getApollo(uri) {
-  const store = initializeApollo(null, uri);
+  const store = initializeApollo(null, uri)
   return store
 }

@@ -3,7 +3,13 @@ import { useEthers } from '@usedapp/core'
 import { useEffect, useState } from 'react'
 import { truncate } from '../../lib/helpers'
 
-export const ENS = ({ address, props }: { address: string, props: TextProps }): JSX.Element => {
+export const ENS = ({
+  address,
+  props,
+}: {
+  address: string
+  props: TextProps
+}): JSX.Element => {
   const { library } = useEthers()
   const [ens, setEns] = useState<string | null>()
 
@@ -25,5 +31,9 @@ export const ENS = ({ address, props }: { address: string, props: TextProps }): 
     }
   }, [address, library])
 
-  return <Text fontFamily="mono" {...props}>{ens || truncate(address)}</Text>
+  return (
+    <Text fontFamily="mono" {...props}>
+      {ens || truncate(address)}
+    </Text>
+  )
 }

@@ -4,9 +4,9 @@
 
 The project is currently on development mode and no stable version has been released.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.1.x   | :x:                |
+| Version | Supported |
+| ------- | --------- |
+| 0.1.x   | :x:       |
 
 ## Reporting a Vulnerability
 

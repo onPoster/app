@@ -1,9 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers'
 import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
-import { ethers, PopulatedTransaction } from 'ethers'
-import { Biconomy } from '@biconomy/mexa'
+import { ethers } from 'ethers'
 import { Poster as PosterType } from 'Poster/typechain/Poster'
-import { SUBGRAPH_RELOADING_TIME_IN_MS } from './constants'
 import PosterSchema from './schema'
 
 /**
@@ -18,51 +16,45 @@ type StateType = {
   replyToContent: string
   replyToContentId: string
   previewImageCID: string
-  biconomy: Biconomy
   previewImageError: string
 }
 export type ActionType =
   | {
-    type: 'SET_INPUT_VALUE'
-    inputValue: StateType['inputValue']
-  }
+      type: 'SET_INPUT_VALUE'
+      inputValue: StateType['inputValue']
+    }
   | {
-    type: 'SET_LOADING'
-    isLoading: StateType['isLoading']
-  }
+      type: 'SET_LOADING'
+      isLoading: StateType['isLoading']
+    }
   | {
-    type: 'SET_CHARACTERS_AMOUNT'
-    charactersAmount: StateType['charactersAmount']
-  }
+      type: 'SET_CHARACTERS_AMOUNT'
+      charactersAmount: StateType['charactersAmount']
+    }
   | {
-    type: 'SET_SUBGRAPH_GETALLPOSTS_RELOAD'
-    needsToReloadGetAllPosts: StateType['needsToReloadGetAllPosts']
-  }
+      type: 'SET_SUBGRAPH_GETALLPOSTS_RELOAD'
+      needsToReloadGetAllPosts: StateType['needsToReloadGetAllPosts']
+    }
   | {
-    type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING'
-    isReloadIntervalLoading: StateType['isReloadIntervalLoading']
-  }
+      type: 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING'
+      isReloadIntervalLoading: StateType['isReloadIntervalLoading']
+    }
   | {
-    type: 'SET_REPLY_TO_CONTENT'
-    replyToContent: StateType['replyToContent']
-  }
+      type: 'SET_REPLY_TO_CONTENT'
+      replyToContent: StateType['replyToContent']
+    }
   | {
-    type: 'SET_REPLY_TO_CONTENT_ID'
-    replyToContentId: StateType['replyToContentId']
-  }
+      type: 'SET_REPLY_TO_CONTENT_ID'
+      replyToContentId: StateType['replyToContentId']
+    }
   | {
-    type: 'SET_PREVIEW_IMAGE_CID'
-    previewImageCID: StateType['previewImageCID']
-  }
+      type: 'SET_PREVIEW_IMAGE_CID'
+      previewImageCID: StateType['previewImageCID']
+    }
   | {
-    type: 'SET_IMAGE_UPLOAD_ERROR'
-    previewImageError: StateType['previewImageError']
-  }
-  | {
-    type: 'SET_BICONOMY'
-    biconomy: StateType['biconomy']
-  }
-
+      type: 'SET_IMAGE_UPLOAD_ERROR'
+      previewImageError: StateType['previewImageError']
+    }
 
 /**
  * Component
@@ -77,7 +69,6 @@ export const initialState: StateType = {
   replyToContentId: '',
   previewImageCID: '',
   previewImageError: '',
-  biconomy: null
 }
 
 export function reducer(state: StateType, action: ActionType): StateType {
@@ -90,17 +81,17 @@ export function reducer(state: StateType, action: ActionType): StateType {
     case 'SET_CHARACTERS_AMOUNT':
       return {
         ...state,
-        charactersAmount: action.charactersAmount
+        charactersAmount: action.charactersAmount,
       }
     case 'SET_REPLY_TO_CONTENT':
       return {
         ...state,
-        replyToContent: action.replyToContent
+        replyToContent: action.replyToContent,
       }
     case 'SET_REPLY_TO_CONTENT_ID':
       return {
         ...state,
-        replyToContentId: action.replyToContentId
+        replyToContentId: action.replyToContentId,
       }
     case 'SET_LOADING':
       return {
@@ -115,55 +106,21 @@ export function reducer(state: StateType, action: ActionType): StateType {
     case 'SET_SUBGRAPH_RELOAD_INTERVAL_LOADING':
       return {
         ...state,
-        isReloadIntervalLoading: action.isReloadIntervalLoading
+        isReloadIntervalLoading: action.isReloadIntervalLoading,
       }
     case 'SET_PREVIEW_IMAGE_CID':
       return {
         ...state,
-        previewImageCID: action.previewImageCID
+        previewImageCID: action.previewImageCID,
       }
     case 'SET_IMAGE_UPLOAD_ERROR':
       return {
         ...state,
-        previewImageError: action.previewImageError
-      }
-    case 'SET_BICONOMY':
-      return {
-        ...state,
-        biconomy: action.biconomy,
+        previewImageError: action.previewImageError,
       }
     default:
       throw new Error()
   }
-}
-
-const gasLessPost = async (
-  contractAddress: string,
-  address: string,
-  state: StateType,
-  transaction: Promise<PopulatedTransaction>,
-  dispatch: React.Dispatch<ActionType>
-) => {
-  const { data } = await transaction;
-  const provider = state.biconomy.getEthersProvider()
-
-  const tx = await provider.send('eth_sendTransaction', [{ data, from: address, to: contractAddress, signatureType: 'EIP712_SIGN' }])
-    .catch(err => console.error(err))
-
-  const timeout = setTimeout(() => {
-    dispatch({
-      type: 'SET_SUBGRAPH_GETALLPOSTS_RELOAD',
-      needsToReloadGetAllPosts: true,
-    })
-  }, SUBGRAPH_RELOADING_TIME_IN_MS * 5)
-
-  await provider.once(tx, () => {
-    clearTimeout(timeout)
-    dispatch({
-      type: 'SET_SUBGRAPH_GETALLPOSTS_RELOAD',
-      needsToReloadGetAllPosts: true,
-    })
-  })
 }
 
 export async function setPostContent(
@@ -180,49 +137,26 @@ export async function setPostContent(
         isLoading: true,
       })
       const signer = provider.getSigner()
-      const address = await signer.getAddress()
-
-      // See https://github.com/ETHPoster/proxy,
-      // Address deployed from 0x9101A466Dc1acb6D0a538D207E8D3e3D45AD0c85
-      const PROXYPOSTERADDRESS = '0xC8734BFb4bd362fcf617cE4cC4DDb2D0C46EE695'
-      const proxyPosterABI = [{ "inputs": [{ "internalType": "address", "name": "_posterAddress", "type": "address" }, { "internalType": "address", "name": "_trustedForwarder", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [{ "internalType": "address", "name": "forwarder", "type": "address" }], "name": "isTrustedForwarder", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "content", "type": "string" }], "name": "post", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "posterContract", "outputs": [{ "internalType": "contract IPoster", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }]
-
-      const usesSponsoredGas = Boolean(state.biconomy)
-
-      const contract = usesSponsoredGas ?
-      // If it’s sponsored, we'll call Proxy Poster and not Poster directly,
-      new ethers.Contract(
-        PROXYPOSTERADDRESS,
-        proxyPosterABI,
-        state.biconomy ?
-          state.biconomy.getSignerByAddress(address) : signer
-      ) as unknown as PosterType :
-      // otherwise, we'll call Poster
-      new ethers.Contract(
+      const contract = new ethers.Contract(
         PosterContractAddress,
         Poster.abi,
         signer
       ) as unknown as PosterType
 
-
       // @TODO: For now, replies do not have images.
-      const post = state.replyToContentId ?
-        PosterSchema.createReplyToPost(state.inputValue, state.replyToContentId) :
-        state.previewImageCID ?
-          PosterSchema.createNewPostWithImage(state.inputValue, state.previewImageCID) :
-          PosterSchema.createNewPost(state.inputValue)
+      const post = state.replyToContentId
+        ? PosterSchema.createReplyToPost(
+            state.inputValue,
+            state.replyToContentId
+          )
+        : state.previewImageCID
+        ? PosterSchema.createNewPostWithImage(
+            state.inputValue,
+            state.previewImageCID
+          )
+        : PosterSchema.createNewPost(state.inputValue)
 
-      usesSponsoredGas ?
-      // Replacing for gas-less transaction
-      await gasLessPost(
-        PROXYPOSTERADDRESS,
-        await signer.getAddress(),
-        state,
-        contract.populateTransaction.post(post, "post"),
-        dispatch
-      ) :
-      // Using a normal post.
-      await (await contract.post(post, "post")).wait()
+      await (await contract.post(post, 'post')).wait()
 
       dispatch({
         type: 'SET_LOADING',
@@ -230,11 +164,11 @@ export async function setPostContent(
       })
       dispatch({
         type: 'SET_INPUT_VALUE',
-        inputValue: ''
+        inputValue: '',
       })
       dispatch({
         type: 'SET_CHARACTERS_AMOUNT',
-        charactersAmount: 0
+        charactersAmount: 0,
       })
       // @TODO: Decide to remove this altogether to only show upon
       // event detection via the additional RPC provider.
@@ -250,11 +184,11 @@ export async function setPostContent(
     }
     dispatch({
       type: 'SET_REPLY_TO_CONTENT',
-      replyToContent: ''
+      replyToContent: '',
     })
     dispatch({
       type: 'SET_REPLY_TO_CONTENT_ID',
-      replyToContentId: ''
+      replyToContentId: '',
     })
   }
 }
