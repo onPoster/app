@@ -88,8 +88,8 @@ const Layout = ({
             py="4"
           >
             <Headline />
-            <Flex justifyContent="flex-end">
-              <Box>
+            <Flex justifySelf="flex-end">
+              <Box mx="2">
                 <IconButton
                   onClick={() => dispatch({
                     type: 'SET_TOGGLE_SETTINGS_DEVELOPER',
