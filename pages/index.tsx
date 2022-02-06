@@ -56,7 +56,7 @@ function HomeIndex(): JSX.Element {
     POSTER_MAX_AMOUNT_OF_CHARACTERS - state.charactersAmount
 
   return (
-    <Layout dispatch={dispatch}>
+    <Layout dispatch={dispatch} isDeveloperModeEnabled={state.settingsDeveloper}>
       <SimpleGrid columns={[1, 1, 1, 2]}>
         <Box
           maxWidth="container.sm"

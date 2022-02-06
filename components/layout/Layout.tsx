@@ -12,7 +12,11 @@ import {
   Tag,
   Text,
   GridItem,
+  IconButton
 } from '@chakra-ui/react'
+import {
+  SettingsIcon
+} from '@chakra-ui/icons'
 import {
   useNotifications,
   useEthers,
@@ -58,6 +62,7 @@ interface LayoutProps {
   children: React.ReactNode
   customMeta?: MetaProps
   dispatch: React.Dispatch<ActionType>
+  isDeveloperModeEnabled: boolean
 }
 
 /**
@@ -66,10 +71,11 @@ interface LayoutProps {
 const Layout = ({
   children,
   customMeta,
+  dispatch,
+  isDeveloperModeEnabled,
 }: LayoutProps): JSX.Element => {
   const { account } = useEthers()
   const { notifications } = useNotifications()
-
   return (
     <>
       <Head customMeta={customMeta} />
@@ -82,7 +88,20 @@ const Layout = ({
             py="4"
           >
             <Headline />
-            {account ? <Account /> : <ConnectWallet />}
+            <Flex justifySelf="flex-end">
+              <Box mx="2">
+                <IconButton
+                  onClick={() => dispatch({
+                    type: 'SET_TOGGLE_SETTINGS_DEVELOPER',
+                    settingsDeveloper: !isDeveloperModeEnabled,
+                  })}
+                  variant={isDeveloperModeEnabled ? "solid" : "outline"}
+                  aria-label='Search database'
+                  icon={<SettingsIcon />}
+                />
+              </Box>
+              {account ? <Account /> : <ConnectWallet />}
+            </Flex>
           </SimpleGrid>
         </Container>
       </header>
@@ -187,7 +206,7 @@ const Layout = ({
               </SimpleGrid>
             </GridItem>
           </Grid>
-          {POSTER_ENVIRONMENT != 'production' && <DevHelp />}
+          {(isDeveloperModeEnabled || POSTER_ENVIRONMENT != 'production') && <DevHelp />}
         </Container>
       </footer>
     </>
