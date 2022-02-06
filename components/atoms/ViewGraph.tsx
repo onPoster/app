@@ -169,13 +169,12 @@ export const ViewGraph = ({
       ) : (
         transactions
           .filter(({ from }) => !JACK_CENSORSHIP_LIST.includes(from.id)) // can't have a social network w/o censorship
-          .filter(({ type }) => type != 'microblog') // hide non-microblog posted filters
           .map(({ id, from, posts, timestamp }) => {
             return posts.map((post) => {
               const parsedPost = parsePost(post)
               const { text, image, type } = parsedPost
               return (
-                text && (
+                text && type == 'microblog' && (
                   <Box key={post.id} mt="8">
                     {image && (
                       <PosterImage src={createURLFromIPFSHash(image)} />
