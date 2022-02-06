@@ -8,6 +8,7 @@ import {
   Text,
   Flex,
   Link,
+  Tag,
 } from '@chakra-ui/react'
 import { getExplorerTransactionLink, useEthers } from '@usedapp/core'
 import { Dispatch, useEffect } from 'react'
@@ -40,7 +41,7 @@ type PIP1Post_Reply = {
 }
 
 type PIP1Post = {
-  type: 'microblog'
+  type: 'microblog' | 'unknown'
   text: string
   image?: string
   replyTo?: PIP1Post_Reply
@@ -56,10 +57,12 @@ export const ViewGraph = ({
   getAllPostsNeedsReload,
   isReloadIntervalLoading,
   dispatch,
+  isDeveloperModeEnabled
 }: {
   getAllPostsNeedsReload: boolean
   isReloadIntervalLoading: boolean
   dispatch: Dispatch<ActionType>
+  isDeveloperModeEnabled: boolean
 }): JSX.Element => {
   const { chainId, library, account } = useEthers()
   const [getPosts, { loading, error, data }] = useLazyQuery(
@@ -137,7 +140,7 @@ export const ViewGraph = ({
     } catch (err) {
       console.error('Error parsing the rawContent of the post.')
       return {
-        type: 'microblog',
+        type: 'unknown',
         text: post.rawContent
       }
     }
@@ -166,10 +169,11 @@ export const ViewGraph = ({
       ) : (
         transactions
           .filter(({ from }) => !JACK_CENSORSHIP_LIST.includes(from.id)) // can't have a social network w/o censorship
+          .filter(({ type }) => type != 'microblog') // hide non-microblog posted filters
           .map(({ id, from, posts, timestamp }) => {
             return posts.map((post) => {
               const parsedPost = parsePost(post)
-              const { text, image } = parsedPost
+              const { text, image, type } = parsedPost
               return (
                 text && (
                   <Box key={post.id} mt="8">
@@ -201,10 +205,11 @@ export const ViewGraph = ({
                             chainId || POSTER_DEFAULT_CHAIN_ID
                           )}`}
                         >
-                          <Text mx="1" fontSize="sm" minW="120px">
+                          <Text mx="1" fontSize="sm">
                             {format(timestamp * 1000)}
                           </Text>
                         </Link>
+                        {isDeveloperModeEnabled && <>·<Tag ml="1">{type}</Tag> </>}
                       </Flex>
                     </Flex>
                     <Text>{text}</Text>
