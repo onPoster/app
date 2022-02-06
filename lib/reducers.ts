@@ -17,6 +17,7 @@ type StateType = {
   replyToContentId: string
   previewImageCID: string
   previewImageError: string
+  settingsDeveloper: boolean
 }
 export type ActionType =
   | {
@@ -55,6 +56,10 @@ export type ActionType =
       type: 'SET_IMAGE_UPLOAD_ERROR'
       previewImageError: StateType['previewImageError']
     }
+  | {
+      type: 'SET_TOGGLE_SETTINGS_DEVELOPER'
+      settingsDeveloper: StateType['settingsDeveloper']
+  }
 
 /**
  * Component
@@ -69,6 +74,7 @@ export const initialState: StateType = {
   replyToContentId: '',
   previewImageCID: '',
   previewImageError: '',
+  settingsDeveloper: false
 }
 
 export function reducer(state: StateType, action: ActionType): StateType {
@@ -117,6 +123,11 @@ export function reducer(state: StateType, action: ActionType): StateType {
       return {
         ...state,
         previewImageError: action.previewImageError,
+      }
+    case 'SET_TOGGLE_SETTINGS_DEVELOPER':
+      return {
+        ...state,
+        settingsDeveloper: action.settingsDeveloper
       }
     default:
       throw new Error()
