@@ -135,6 +135,7 @@ function HomeIndex(): JSX.Element {
                 getAllPostsNeedsReload={state.needsToReloadGetAllPosts}
                 isReloadIntervalLoading={state.isReloadIntervalLoading}
                 dispatch={dispatch}
+                isDeveloperModeEnabled={state.settingsDeveloper}
               />
             </ApolloProvider>
           )}
