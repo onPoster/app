@@ -21,6 +21,7 @@ import {
   useNotifications,
   useEthers,
   shortenAddress,
+  ChainId,
 } from '@usedapp/core'
 import React from 'react'
 import { POSTER_APP_VERSION } from '../../lib/constants'
@@ -37,6 +38,7 @@ import { truncate } from '../../lib/helpers'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { ActionType } from '../../lib/reducers'
 import { DevHelp } from '../atoms/DevHelp'
+import { GnosisIcon } from '../atoms/GnosisIcon'
 
 // Extends `window` to add `ethereum`.
 declare global {
@@ -74,8 +76,33 @@ const Layout = ({
   dispatch,
   isDeveloperModeEnabled,
 }: LayoutProps): JSX.Element => {
-  const { account } = useEthers()
+  const { account, chainId } = useEthers()
   const { notifications } = useNotifications()
+
+  const params = {
+    chainId: '0x'+ChainId.xDai.toString(16),
+    chainName: 'Gnosis Chain',
+    nativeCurrency: {
+      name: 'xDAI',
+      symbol: 'xDAI',
+      decimals: 18,
+    },
+    rpcUrls: 'https://rpc.gnosischain.com',
+    blockExplorerUrls: [ 'https://blockscout.com/xdai/mainnet' ]
+  }
+
+  const triggerGnosisChain = () => {
+    window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: params.chainId }],
+    }).catch(() => {
+      window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [params, account],
+      })
+    })
+  }
+
   return (
     <>
       <Head customMeta={customMeta} />
@@ -91,6 +118,7 @@ const Layout = ({
             <Flex justifySelf="flex-end">
               <Box mx="2">
                 <IconButton
+                  mx="1"
                   onClick={() => dispatch({
                     type: 'SET_TOGGLE_SETTINGS_DEVELOPER',
                     settingsDeveloper: !isDeveloperModeEnabled,
@@ -99,6 +127,14 @@ const Layout = ({
                   aria-label='Search database'
                   icon={<SettingsIcon />}
                 />
+                {account && <IconButton
+                  mx="1"
+                  onClick={() => triggerGnosisChain()}
+                  disabled={chainId == ChainId.xDai}
+                  variant={chainId == ChainId.xDai ? "solid" : "outline"}
+                  aria-label='Add/Switch to Gnosis Chain'
+                  icon={<GnosisIcon />}
+                />}
               </Box>
               {account ? <Account /> : <ConnectWallet />}
             </Flex>
