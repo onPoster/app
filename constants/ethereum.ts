@@ -1,4 +1,4 @@
-import { ChainId } from '@usedapp/core'
+import { ChainId, Goerli, xDai, Polygon, Hardhat, Chain } from '@usedapp/core'
 
 export const INFURA_ID = 'b7f7038518824df4bf3011a0e94bc6a8'
 export const DEFAULT_IPFS_API =
@@ -18,3 +18,12 @@ export const ETHEREUM_PROVIDERS = {
   [ChainId.xDai]: `https://poa-xdai.gateway.pokt.network/v1/lb/61a5ac03fd9f8800392ac701`,
   [ChainId.Hardhat]: 'http://localhost:8545', // Using a different for HH to avoid conflict w/localhost.
 }
+
+export const SUPPORTED_CHAINS = {
+  [ChainId.xDai]: xDai,
+  [ChainId.Polygon]: Polygon,
+  [ChainId.Goerli]: Goerli,
+  [ChainId.Hardhat]: Hardhat
+}
+
+export const getChainFromChainId = (chainId: ChainId): Chain => SUPPORTED_CHAINS[chainId];

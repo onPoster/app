@@ -3,7 +3,10 @@ import {
   ChainId,
   Config,
   DAppProvider,
-  MULTICALL_ADDRESSES,
+  Goerli,
+  Hardhat,
+  Polygon,
+  xDai,
 } from '@usedapp/core'
 import type { AppProps } from 'next/app'
 import React from 'react'
@@ -16,14 +19,14 @@ const config: Config = {
     [ChainId.xDai]: ETHEREUM_PROVIDERS[ChainId.xDai],
     [ChainId.Hardhat]: ETHEREUM_PROVIDERS[ChainId.Hardhat],
   },
-  supportedChains: [
-    ChainId.Goerli,
-    ChainId.Polygon,
-    ChainId.xDai,
-    ChainId.Hardhat,
+  networks: [
+    Goerli,
+    Polygon,
+    xDai,
+    Hardhat,
   ],
   multicallAddresses: {
-    ...MULTICALL_ADDRESSES,
+    [ChainId.Hardhat]: "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9"
   },
 }
 

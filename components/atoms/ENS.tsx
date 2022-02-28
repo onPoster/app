@@ -1,16 +1,17 @@
 import { Text, TextProps } from '@chakra-ui/react'
-import { useEthers } from '@usedapp/core'
 import { useEffect, useState } from 'react'
 import { truncate } from '../../lib/helpers'
+import { JsonRpcProvider } from '@ethersproject/providers'
 
 export const ENS = ({
   address,
   props,
+  library
 }: {
   address: string
   props: TextProps
+  library: JsonRpcProvider
 }): JSX.Element => {
-  const { library } = useEthers()
   const [ens, setEns] = useState<string | null>()
 
   useEffect(() => {

@@ -8,10 +8,12 @@ import {
   MenuItem,
 } from '@chakra-ui/react'
 import blockies from 'blockies-ts'
-import { useEthers } from '@usedapp/core'
+
 import { truncate } from '../../lib/helpers'
-export const Account = () => {
-  const { account, deactivate } = useEthers()
+import { ActionType } from '../../lib/reducers'
+
+
+export const Account = ({ account, dispatch, useFallbackAccount, deactivate }: { account: string, dispatch: React.Dispatch<ActionType>, useFallbackAccount: boolean, deactivate: () => void }) => {
   let blockieImageSrc
   if (typeof window !== 'undefined') {
     blockieImageSrc = blockies.create({ seed: account }).toDataURL()
@@ -32,6 +34,12 @@ export const Account = () => {
         <MenuList>
           <MenuItem
             onClick={() => {
+              if (useFallbackAccount) {
+                dispatch({
+                  type: 'SET_FALLBACK_ACCOUNT',
+                  useFallbackAccount: false,
+                })
+              }
               deactivate()
             }}
           >

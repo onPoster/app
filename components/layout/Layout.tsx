@@ -19,9 +19,9 @@ import {
 } from '@chakra-ui/icons'
 import {
   useNotifications,
-  useEthers,
   shortenAddress,
   ChainId,
+  Web3Ethers,
 } from '@usedapp/core'
 import React from 'react'
 import { POSTER_APP_VERSION } from '../../lib/constants'
@@ -39,6 +39,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { ActionType } from '../../lib/reducers'
 import { DevHelp } from '../atoms/DevHelp'
 import { GnosisIcon } from '../atoms/GnosisIcon'
+import { TBurnerSigner } from '../../lib/hooks'
 
 // Extends `window` to add `ethereum`.
 declare global {
@@ -65,6 +66,13 @@ interface LayoutProps {
   customMeta?: MetaProps
   dispatch: React.Dispatch<ActionType>
   isDeveloperModeEnabled: boolean
+  useFallbackAccount: boolean
+  account: string
+  chainId: ChainId
+  fallback: TBurnerSigner
+  activate: Web3Ethers['activate']
+  deactivate: Web3Ethers['deactivate']
+  activateBrowserWallet: Web3Ethers['activateBrowserWallet']
 }
 
 /**
@@ -74,9 +82,16 @@ const Layout = ({
   children,
   customMeta,
   dispatch,
+  account, 
+  chainId,
+  fallback,
   isDeveloperModeEnabled,
+  useFallbackAccount,
+  deactivate,
+  activate,
+  activateBrowserWallet
 }: LayoutProps): JSX.Element => {
-  const { account, chainId } = useEthers()
+  const currentAccount = useFallbackAccount ? fallback.account : account
   const { notifications } = useNotifications()
 
   const params = {
@@ -91,7 +106,7 @@ const Layout = ({
     blockExplorerUrls: [ 'https://blockscout.com/xdai/mainnet' ]
   }
 
-  const triggerGnosisChain = () => {
+  const triggerGnosisChain = (account: string) => {
     window.ethereum.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: params.chainId }],
@@ -127,16 +142,16 @@ const Layout = ({
                   aria-label='Search database'
                   icon={<SettingsIcon />}
                 />
-                {account && <IconButton
+                {account && !useFallbackAccount && <IconButton
                   mx="1"
-                  onClick={() => triggerGnosisChain()}
+                  onClick={() => triggerGnosisChain(account)}
                   disabled={chainId == ChainId.xDai}
                   variant={chainId == ChainId.xDai ? "solid" : "outline"}
                   aria-label='Add/Switch to Gnosis Chain'
                   icon={<GnosisIcon />}
                 />}
               </Box>
-              {account ? <Account /> : <ConnectWallet />}
+              {currentAccount ? <Account deactivate={deactivate} account={currentAccount} dispatch={dispatch} useFallbackAccount={useFallbackAccount}/> : <ConnectWallet activate={activate} activateBrowserWallet={activateBrowserWallet} dispatch={dispatch} />}
             </Flex>
           </SimpleGrid>
         </Container>
@@ -242,7 +257,7 @@ const Layout = ({
               </SimpleGrid>
             </GridItem>
           </Grid>
-          {(isDeveloperModeEnabled || POSTER_ENVIRONMENT != 'production') && <DevHelp />}
+          {(isDeveloperModeEnabled || POSTER_ENVIRONMENT != 'production') && <DevHelp chainId={chainId} />}
         </Container>
       </footer>
     </>

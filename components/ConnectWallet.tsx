@@ -10,12 +10,13 @@ import {
   ModalOverlay,
   useDisclosure,
 } from '@chakra-ui/react'
-import { useEthers } from '@usedapp/core'
+import { ViewIcon } from '@chakra-ui/icons'
 import React from 'react'
+import { Web3Ethers } from '@usedapp/core'
 import { walletconnect } from '../lib/connectors'
+import { ActionType } from '../lib/reducers'
 
-function ConnectWallet(): JSX.Element {
-  const { activate, activateBrowserWallet } = useEthers()
+function ConnectWallet({ dispatch, activate, activateBrowserWallet }: { dispatch: React.Dispatch<ActionType>, activate: Web3Ethers["activate"], activateBrowserWallet: () => void }): JSX.Element {
   const { onOpen, isOpen, onClose } = useDisclosure()
 
   return (
@@ -74,6 +75,27 @@ function ConnectWallet(): JSX.Element {
               }}
             >
               WalletConnect
+            </Button>
+            <Button
+              justifyContent="space-between"
+              width="100%"
+              mb="4"
+              size="lg"
+              variant="outline"
+              rightIcon={
+                <ViewIcon
+                  maxWidth="20px"
+                  alt="Private Mode"
+                />
+              }
+              onClick={() => {
+                dispatch({
+                  type: 'SET_FALLBACK_ACCOUNT',
+                  useFallbackAccount: true,
+                })
+              }}
+            >
+              Private (Demo)
             </Button>
           </ModalBody>
         </ModalContent>
