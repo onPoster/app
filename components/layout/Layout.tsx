@@ -23,7 +23,7 @@ import {
   ChainId,
   Web3Ethers,
 } from '@usedapp/core'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { POSTER_APP_VERSION } from '../../lib/constants'
 import {
   POSTER_CONTRACT_ADDRESS,
@@ -40,6 +40,8 @@ import { ActionType } from '../../lib/reducers'
 import { DevHelp } from '../atoms/DevHelp'
 import { GnosisIcon } from '../atoms/GnosisIcon'
 import { TBurnerSigner } from '../../lib/hooks'
+import { JsonRpcProvider } from '@usedapp/core/node_modules/@ethersproject/providers'
+import { utils } from 'ethers'
 
 // Extends `window` to add `ethereum`.
 declare global {
@@ -82,7 +84,7 @@ const Layout = ({
   children,
   customMeta,
   dispatch,
-  account, 
+  account,
   chainId,
   fallback,
   isDeveloperModeEnabled,
@@ -95,7 +97,7 @@ const Layout = ({
   const { notifications } = useNotifications()
 
   const params = {
-    chainId: '0x'+ChainId.xDai.toString(16),
+    chainId: '0x' + ChainId.xDai.toString(16),
     chainName: 'Gnosis Chain',
     nativeCurrency: {
       name: 'xDAI',
@@ -103,7 +105,7 @@ const Layout = ({
       decimals: 18,
     },
     rpcUrls: 'https://rpc.gnosischain.com',
-    blockExplorerUrls: [ 'https://blockscout.com/xdai/mainnet' ]
+    blockExplorerUrls: ['https://blockscout.com/xdai/mainnet']
   }
 
   const triggerGnosisChain = (account: string) => {
@@ -118,6 +120,25 @@ const Layout = ({
     })
   }
 
+
+
+  useEffect(() => {
+    // NB: Faucet is only triggered on localhost w/fallback account
+    const shouldTriggerFaucet = currentAccount && useFallbackAccount
+
+    const triggerFaucet = async () => {
+      //NB: Only possible with a local provider like hardhat that has connected accounts.
+      const provider = await (fallback.signer.provider as JsonRpcProvider)
+      const localSigner = provider.getSigner();
+      await localSigner.sendTransaction({
+        to: currentAccount,
+        value: utils.parseEther('0.01')
+      })
+    }
+
+    shouldTriggerFaucet && triggerFaucet();
+  }, [])
+
   return (
     <>
       <Head customMeta={customMeta} />
@@ -131,7 +152,7 @@ const Layout = ({
           >
             <Headline />
             <Flex justifySelf="flex-end">
-              <Box mx="2">
+              <Flex mx="2">
                 <IconButton
                   mx="1"
                   onClick={() => dispatch({
@@ -150,8 +171,8 @@ const Layout = ({
                   aria-label='Add/Switch to Gnosis Chain'
                   icon={<GnosisIcon />}
                 />}
-              </Box>
-              {currentAccount ? <Account deactivate={deactivate} account={currentAccount} dispatch={dispatch} useFallbackAccount={useFallbackAccount}/> : <ConnectWallet activate={activate} activateBrowserWallet={activateBrowserWallet} dispatch={dispatch} />}
+              </Flex>
+              {currentAccount ? <Account deactivate={deactivate} account={currentAccount} dispatch={dispatch} useFallbackAccount={useFallbackAccount} /> : <ConnectWallet activate={activate} activateBrowserWallet={activateBrowserWallet} dispatch={dispatch} />}
             </Flex>
           </SimpleGrid>
         </Container>
