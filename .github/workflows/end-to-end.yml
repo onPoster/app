@@ -89,7 +89,7 @@ jobs:
         working-directory: subgraph
 
       - name: Deploy subgraph to local node
-        run: yarn deploy-local -l v0.0.1",
+        run: yarn deploy-local -l v0.0.1
         working-directory: subgraph
 
       ##### Poster App #####
