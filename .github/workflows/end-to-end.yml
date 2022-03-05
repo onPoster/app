@@ -67,9 +67,9 @@ jobs:
         run: docker-compose up -d
         working-directory: subgraph
 
-      - uses: ifaxity/wait-on-action@v1
-        with:
-          resource: http://localhost:8020
+      # - uses: ifaxity/wait-on-action@v1
+      #   with:
+      #     resource: http://localhost:8020
 
       - name: Configure subgraph for local node
         run: NETWORK=localhost yarn define
