@@ -25,12 +25,13 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps
 
-  ##### RPC node server #####
-  run_node:
+  ##### RPC node + Subgraph server #####
+  backend:
     name: Poster Contract
     needs: [node_deps]
     runs-on: ubuntu-latest
     steps:
+      ##### Hardhat node #####
       - uses: actions/checkout@v2
         with:
           repository: onPoster/contract
@@ -52,12 +53,7 @@ jobs:
         run: yarn deploy --network localhost
         working-directory: contract
 
-  ##### The Graph Indexer #####
-  run_graph:
-    name: Poster Subgraph
-    needs: [run_node]
-    runs-on: ubuntu-latest
-    steps:
+      ##### The Graph Indexer #####
       - uses: actions/checkout@v2
         with:
           repository: onPoster/subgraph
@@ -71,9 +67,9 @@ jobs:
         run: docker-compose up -d
         working-directory: subgraph
 
-      # - uses: ifaxity/wait-on-action@v1
-      #   with:
-      #     resource: http://localhost:8020
+      - uses: ifaxity/wait-on-action@v1
+        with:
+          resource: http://localhost:8020
 
       - name: Configure subgraph for local node
         run: NETWORK=localhost yarn define
@@ -96,7 +92,7 @@ jobs:
   ##### Poster App #####
   run_app:
     name: Poster App
-    needs: [run_graph, setup_app]
+    needs: [backend, setup_app]
     runs-on: ubuntu-latest
     steps:
       - name: Run Poster app
