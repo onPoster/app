@@ -65,7 +65,7 @@ jobs:
         run: yarn node --hostname 0.0.0.0 &
         working-directory: contract
 
-      - uses: ifaxity/wait-on-action
+      - uses: ifaxity/wait-on-action@v1
         with:
           resource: http://localhost:8545
 
@@ -83,7 +83,7 @@ jobs:
         run: docker-compose up -d
         working-directory: subgraph
 
-      - uses: ifaxity/wait-on-action
+      - uses: ifaxity/wait-on-action@v1
         with:
           resource: http://localhost:8020
 
@@ -103,7 +103,7 @@ jobs:
 
   ##### Poster App #####
   run_app:
-    name: Subgraph node
+    name: Poster App
     needs: [run_node, run_graph, setup_app]
     runs-on: ubuntu-latest
     steps:
