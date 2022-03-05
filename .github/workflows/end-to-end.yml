@@ -1,0 +1,126 @@
+name: End to end tests
+on:
+  push:
+    branches: ['**']
+jobs:
+  node_deps:
+    name: Nodejs Setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Uses node@16
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: https://registry.npmjs.org/
+          cache: yarn
+
+  ##### App, node, subgraph setup #####
+  setup_app:
+    name: Poster App (setup)
+    needs: [node_deps]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download app repo
+        uses: actions/checkout@v2
+
+      - name: Install app dependencies
+        run: yarn
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+  setup_contract:
+    name: Poster Contract (setup)
+    needs: [node_deps]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download smart contracts
+        uses: actions/checkout@v2
+        with:
+          repository: onPoster/contract
+          path: contract
+
+      - name: Install contract dependencies
+        run: yarn
+        working-directory: contract
+
+  setup_subgraph:
+    name: Poster Subgraph (setup)
+    needs: [node_deps]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download subgraph
+        uses: actions/checkout@v2
+        with:
+          repository: onPoster/subgraph
+          path: subgraph
+
+      - name: Install subgraph dependencies
+        run: yarn
+        working-directory: subgraph
+
+  ##### RPC node server #####
+  run_node:
+    name: Hardhat node
+    needs: [setup_contract]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run hardhat node
+        run: yarn node --hostname 0.0.0.0 &
+        working-directory: contract
+
+      - name: Wait for hardhat node
+        uses: ifaxity/wait-on-action
+        with:
+          resource: http://localhost:8545
+
+      - name: Deploy smart contracts
+        run: yarn deploy --network localhost
+        working-directory: contract
+
+  ##### The Graph Indexer #####
+  run_graph:
+    name: Subgraph node
+    needs: [setup_subgraph]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run indexer (graph + ipfs)
+        run: docker-compose up -d
+        working-directory: subgraph
+
+      - name: Wait for subgraph node
+        uses: ifaxity/wait-on-action
+        with:
+          resource: http://localhost:8020
+
+      - name: Configure subgraph for local node
+        run: NETWORK=localhost yarn define
+        env:
+          NETWORK: localhost
+        working-directory: subgraph
+
+      - name: Build subgraph for local node
+        run: yarn codegen && yarn build
+        working-directory: subgraph
+
+      - name: Deploy subgraph to local node
+        run: yarn create-local && yarn deploy-local -l v0.0.1",
+        working-directory: subgraph
+
+  ##### Poster App #####
+  run_app:
+    name: Subgraph node
+    needs: [run_node, run_graph, setup_app]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Poster app
+        run: yarn dev:local &
+
+      - name: Run Playwright tests
+        run: yarn playwright test
+
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: playwright-test-results
+          path: test-results/

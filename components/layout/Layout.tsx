@@ -123,6 +123,7 @@ const Layout = ({
 
 
   useEffect(() => {
+
     // NB: Faucet is only triggered on localhost w/fallback account
     const shouldTriggerFaucet = currentAccount && useFallbackAccount
 
@@ -137,7 +138,7 @@ const Layout = ({
     }
 
     shouldTriggerFaucet && triggerFaucet();
-  }, [])
+  }, [currentAccount])
 
   return (
     <>

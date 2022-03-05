@@ -48,7 +48,7 @@ export const Account = ({ account, dispatch, useFallbackAccount, deactivate }: {
     >
       <Image ml="4" src={blockieImageSrc} alt="blockie" />
       <Menu placement="bottom-end">
-        <MenuButton as={ReadyBalancedButton} ml="4" w={{ base: '200%', md: 'auto' }}>
+        <MenuButton aria-label='Address' as={ReadyBalancedButton} ml="4" w={{ base: '200%', md: 'auto' }}>
           {truncate(account)}
         </MenuButton>
         <MenuList>

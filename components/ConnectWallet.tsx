@@ -28,7 +28,7 @@ function ConnectWallet({ dispatch, activate, activateBrowserWallet }: { dispatch
         display="block"
         margin="auto"
       >
-        <Button colorScheme="teal" variant="outline" onClick={onOpen}>
+        <Button aria-label="Connect Wallet" colorScheme="teal" variant="outline" onClick={onOpen}>
           Connect wallet
         </Button>
       </Box>
@@ -77,6 +77,7 @@ function ConnectWallet({ dispatch, activate, activateBrowserWallet }: { dispatch
               WalletConnect
             </Button>
             <Button
+              aria-label='Private (Demo)'
               justifyContent="space-between"
               width="100%"
               mb="4"

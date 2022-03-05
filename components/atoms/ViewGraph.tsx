@@ -216,7 +216,7 @@ export const ViewGraph = ({
                         {isDeveloperModeEnabled && <>·<Tag ml="1">{type}</Tag> </>}
                       </Flex>
                     </Flex>
-                    <Text>{text}</Text>
+                    <Text aria-label="Post">{text}</Text>
                     {account &&
                       false && ( // @TODO: Disabling reply functionality for now.
                         <ChatIcon

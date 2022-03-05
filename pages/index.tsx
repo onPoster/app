@@ -85,6 +85,7 @@ function HomeIndex(): JSX.Element {
             )}
             <InputGroup size="sm">
               <Textarea
+                aria-label='Post content'
                 bg={POSTER_UI_BG_COLOR_MAP.textArea[colorMode]}
                 color={POSTER_UI_TEXT_COLOR_MAP[colorMode]}
                 type="text"
@@ -121,6 +122,7 @@ function HomeIndex(): JSX.Element {
                 <AddImage isDisabled={state.isLoading} dispatch={dispatch} />
               )}
               <Button
+                aria-label='Submit Post'
                 mt="2"
                 colorScheme="teal"
                 isDisabled={!currentAccount}
