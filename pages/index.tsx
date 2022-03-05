@@ -10,7 +10,6 @@ import {
   Flex,
 } from '@chakra-ui/react'
 import { ApolloProvider } from '@apollo/client'
-import { useEthers } from '@usedapp/core'
 import React, { useReducer, useState, useEffect } from 'react'
 
 import { DarkModeSwitch } from '../components/atoms/DarkModeSwitch'
@@ -33,17 +32,19 @@ import {
   POSTER_UI_BG_COLOR_MAP,
   POSTER_UI_TEXT_COLOR_MAP,
 } from '../constants/ui'
+import { useEthersWithFallback } from '../lib/hooks'
 
 function HomeIndex(): JSX.Element {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { account, chainId, library } = useEthers()
+  const { account, chainId, library, fallback, activate, deactivate, activateBrowserWallet } = useEthersWithFallback()
+  const currentAccount = state.useFallbackAccount ? fallback.account : account
   const [apolloClient, setApolloClient] = useState()
   const { colorMode } = useColorMode()
 
   useEffect(() => {
     const subgraphURL =
       POSTER_SUBGRAPH_URLS_BY_CHAIN_ID_MAP[
-        chainId ? chainId : POSTER_DEFAULT_CHAIN_ID
+      chainId ? chainId : POSTER_DEFAULT_CHAIN_ID
       ]
     const apolloClient = getApollo(subgraphURL)
     setApolloClient(apolloClient)
@@ -56,7 +57,17 @@ function HomeIndex(): JSX.Element {
     POSTER_MAX_AMOUNT_OF_CHARACTERS - state.charactersAmount
 
   return (
-    <Layout dispatch={dispatch} isDeveloperModeEnabled={state.settingsDeveloper}>
+    <Layout
+      account={account}
+      chainId={chainId}
+      fallback={fallback}
+      dispatch={dispatch}
+      isDeveloperModeEnabled={state.settingsDeveloper}
+      useFallbackAccount={state.useFallbackAccount} 
+      activate={activate}
+      deactivate={deactivate}
+      activateBrowserWallet={activateBrowserWallet}
+    >
       <SimpleGrid columns={[1, 1, 1, 2]}>
         <Box
           maxWidth="container.sm"
@@ -64,7 +75,7 @@ function HomeIndex(): JSX.Element {
           bg={POSTER_UI_BG_COLOR_MAP.containers[colorMode]}
         >
           <Box>
-            {account && state.replyToContentId && (
+            {currentAccount && state.replyToContentId && (
               <Text>You are replying to: {state.replyToContent}</Text>
             )}
             {state.previewImageError && (
@@ -74,12 +85,13 @@ function HomeIndex(): JSX.Element {
             )}
             <InputGroup size="sm">
               <Textarea
+                aria-label='Post content'
                 bg={POSTER_UI_BG_COLOR_MAP.textArea[colorMode]}
                 color={POSTER_UI_TEXT_COLOR_MAP[colorMode]}
                 type="text"
                 rows={10}
                 cols={10}
-                isDisabled={state.isLoading || !account}
+                isDisabled={state.isLoading || !currentAccount}
                 wrap="soft"
                 maxLength={300}
                 style={{ overflow: 'hidden', resize: 'none' }}
@@ -102,28 +114,29 @@ function HomeIndex(): JSX.Element {
                 >{`${remainingCharacters}`}</Text>
               </InputRightElement>
             </InputGroup>
-            {account && state.previewImageCID && (
+            {currentAccount && state.previewImageCID && (
               <PosterImage src={createURLForCID(state.previewImageCID)} />
             )}
             <Flex alignItems="center" justifyContent="space-between">
-              {account && (
+              {currentAccount && (
                 <AddImage isDisabled={state.isLoading} dispatch={dispatch} />
               )}
               <Button
+                aria-label='Submit Post'
                 mt="2"
                 colorScheme="teal"
-                isDisabled={!account}
+                isDisabled={!currentAccount}
                 isLoading={state.isLoading}
                 onClick={() =>
                   setPostContent(
                     POSTER_CONTRACT_ADDRESS,
                     state,
-                    library,
+                    state.useFallbackAccount ? fallback.signer : library.getSigner(),
                     dispatch
                   )
                 }
               >
-                {account ? 'Post' : 'Connect wallet to post'}
+                {currentAccount ? 'Post' : 'Connect wallet to post'}
               </Button>
             </Flex>
           </Box>
@@ -132,6 +145,9 @@ function HomeIndex(): JSX.Element {
           {apolloClient && (
             <ApolloProvider client={apolloClient}>
               <ViewGraph
+                account={account}
+                chainId={chainId}
+                library={library}
                 getAllPostsNeedsReload={state.needsToReloadGetAllPosts}
                 isReloadIntervalLoading={state.isReloadIntervalLoading}
                 dispatch={dispatch}

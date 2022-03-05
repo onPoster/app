@@ -1,4 +1,4 @@
-import { Web3Provider } from '@ethersproject/providers'
+import { JsonRpcSigner } from '@ethersproject/providers'
 import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
 import { ethers } from 'ethers'
 import { Poster as PosterType } from 'Poster/typechain/Poster'
@@ -18,6 +18,7 @@ type StateType = {
   previewImageCID: string
   previewImageError: string
   settingsDeveloper: boolean
+  useFallbackAccount: boolean
 }
 export type ActionType =
   | {
@@ -60,6 +61,10 @@ export type ActionType =
       type: 'SET_TOGGLE_SETTINGS_DEVELOPER'
       settingsDeveloper: StateType['settingsDeveloper']
   }
+  | {
+      type: 'SET_FALLBACK_ACCOUNT',
+      useFallbackAccount: StateType['useFallbackAccount']
+  }
 
 /**
  * Component
@@ -74,7 +79,8 @@ export const initialState: StateType = {
   replyToContentId: '',
   previewImageCID: '',
   previewImageError: '',
-  settingsDeveloper: false
+  settingsDeveloper: false,
+  useFallbackAccount: false
 }
 
 export function reducer(state: StateType, action: ActionType): StateType {
@@ -129,6 +135,11 @@ export function reducer(state: StateType, action: ActionType): StateType {
         ...state,
         settingsDeveloper: action.settingsDeveloper
       }
+    case 'SET_FALLBACK_ACCOUNT':
+      return {
+        ...state,
+        useFallbackAccount: action.useFallbackAccount
+      }
     default:
       throw new Error()
   }
@@ -137,17 +148,16 @@ export function reducer(state: StateType, action: ActionType): StateType {
 export async function setPostContent(
   PosterContractAddress: string,
   state: StateType,
-  provider: Web3Provider,
+  signer: ethers.Wallet | JsonRpcSigner,
   dispatch: React.Dispatch<ActionType>
 ): Promise<void> {
   if (!state.inputValue) return
-  if (provider) {
+  if (signer) {
     try {
       dispatch({
         type: 'SET_LOADING',
         isLoading: true,
       })
-      const signer = provider.getSigner()
       const contract = new ethers.Contract(
         PosterContractAddress,
         Poster.abi,
@@ -188,6 +198,7 @@ export async function setPostContent(
       //   isReloadIntervalLoading: true
       // })
     } catch (e) {
+      console.error(e);
       dispatch({
         type: 'SET_LOADING',
         isLoading: false,

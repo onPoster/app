@@ -19,11 +19,11 @@ import {
 } from '@chakra-ui/icons'
 import {
   useNotifications,
-  useEthers,
   shortenAddress,
   ChainId,
+  Web3Ethers,
 } from '@usedapp/core'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { POSTER_APP_VERSION } from '../../lib/constants'
 import {
   POSTER_CONTRACT_ADDRESS,
@@ -39,6 +39,9 @@ import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { ActionType } from '../../lib/reducers'
 import { DevHelp } from '../atoms/DevHelp'
 import { GnosisIcon } from '../atoms/GnosisIcon'
+import { TBurnerSigner } from '../../lib/hooks'
+import { JsonRpcProvider } from '@usedapp/core/node_modules/@ethersproject/providers'
+import { utils } from 'ethers'
 
 // Extends `window` to add `ethereum`.
 declare global {
@@ -65,6 +68,13 @@ interface LayoutProps {
   customMeta?: MetaProps
   dispatch: React.Dispatch<ActionType>
   isDeveloperModeEnabled: boolean
+  useFallbackAccount: boolean
+  account: string
+  chainId: ChainId
+  fallback: TBurnerSigner
+  activate: Web3Ethers['activate']
+  deactivate: Web3Ethers['deactivate']
+  activateBrowserWallet: Web3Ethers['activateBrowserWallet']
 }
 
 /**
@@ -74,13 +84,20 @@ const Layout = ({
   children,
   customMeta,
   dispatch,
+  account,
+  chainId,
+  fallback,
   isDeveloperModeEnabled,
+  useFallbackAccount,
+  deactivate,
+  activate,
+  activateBrowserWallet
 }: LayoutProps): JSX.Element => {
-  const { account, chainId } = useEthers()
+  const currentAccount = useFallbackAccount ? fallback.account : account
   const { notifications } = useNotifications()
 
   const params = {
-    chainId: '0x'+ChainId.xDai.toString(16),
+    chainId: '0x' + ChainId.xDai.toString(16),
     chainName: 'Gnosis Chain',
     nativeCurrency: {
       name: 'xDAI',
@@ -88,10 +105,10 @@ const Layout = ({
       decimals: 18,
     },
     rpcUrls: 'https://rpc.gnosischain.com',
-    blockExplorerUrls: [ 'https://blockscout.com/xdai/mainnet' ]
+    blockExplorerUrls: ['https://blockscout.com/xdai/mainnet']
   }
 
-  const triggerGnosisChain = () => {
+  const triggerGnosisChain = (account: string) => {
     window.ethereum.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: params.chainId }],
@@ -102,6 +119,26 @@ const Layout = ({
       })
     })
   }
+
+
+
+  useEffect(() => {
+
+    // NB: Faucet is only triggered on localhost w/fallback account
+    const shouldTriggerFaucet = currentAccount && useFallbackAccount
+
+    const triggerFaucet = async () => {
+      //NB: Only possible with a local provider like hardhat that has connected accounts.
+      const provider = await (fallback.signer.provider as JsonRpcProvider)
+      const localSigner = provider.getSigner();
+      await localSigner.sendTransaction({
+        to: currentAccount,
+        value: utils.parseEther('0.01')
+      })
+    }
+
+    shouldTriggerFaucet && triggerFaucet();
+  }, [currentAccount])
 
   return (
     <>
@@ -116,7 +153,7 @@ const Layout = ({
           >
             <Headline />
             <Flex justifySelf="flex-end">
-              <Box mx="2">
+              <Flex mx="2">
                 <IconButton
                   mx="1"
                   onClick={() => dispatch({
@@ -127,16 +164,16 @@ const Layout = ({
                   aria-label='Search database'
                   icon={<SettingsIcon />}
                 />
-                {account && <IconButton
+                {account && !useFallbackAccount && <IconButton
                   mx="1"
-                  onClick={() => triggerGnosisChain()}
+                  onClick={() => triggerGnosisChain(account)}
                   disabled={chainId == ChainId.xDai}
                   variant={chainId == ChainId.xDai ? "solid" : "outline"}
                   aria-label='Add/Switch to Gnosis Chain'
                   icon={<GnosisIcon />}
                 />}
-              </Box>
-              {account ? <Account /> : <ConnectWallet />}
+              </Flex>
+              {currentAccount ? <Account deactivate={deactivate} account={currentAccount} dispatch={dispatch} useFallbackAccount={useFallbackAccount} /> : <ConnectWallet activate={activate} activateBrowserWallet={activateBrowserWallet} dispatch={dispatch} />}
             </Flex>
           </SimpleGrid>
         </Container>
@@ -242,7 +279,7 @@ const Layout = ({
               </SimpleGrid>
             </GridItem>
           </Grid>
-          {(isDeveloperModeEnabled || POSTER_ENVIRONMENT != 'production') && <DevHelp />}
+          {(isDeveloperModeEnabled || POSTER_ENVIRONMENT != 'production') && <DevHelp chainId={chainId} />}
         </Container>
       </footer>
     </>

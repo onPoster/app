@@ -1,5 +1,5 @@
 import { Flex, GridItem, Grid, SimpleGrid, Text } from '@chakra-ui/react'
-import { useEthers } from '@usedapp/core'
+import { ChainId } from '@usedapp/core'
 import {
   DEFAULT_IPFS_API,
   DEFAULT_IPFS_GATEWAY,
@@ -10,8 +10,7 @@ import {
   POSTER_SUBGRAPH_URLS_BY_CHAIN_ID_MAP,
 } from '../../constants/poster'
 
-export const DevHelp = (): JSX.Element => {
-  const { chainId } = useEthers()
+export const DevHelp = ({ chainId }: { chainId: ChainId }): JSX.Element => {
   return (
     <Grid
       templateColumns="repeat(6, 1fr)"

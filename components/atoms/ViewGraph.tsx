@@ -10,7 +10,8 @@ import {
   Link,
   Tag,
 } from '@chakra-ui/react'
-import { getExplorerTransactionLink, useEthers } from '@usedapp/core'
+import { JsonRpcProvider } from '@ethersproject/providers'
+import { ChainId } from '@usedapp/core'
 import { Dispatch, useEffect } from 'react'
 import { Poster as PosterType } from 'Poster/typechain/Poster'
 import Poster from 'Poster/artifacts/contracts/Poster.sol/Poster.json'
@@ -32,6 +33,9 @@ import {
   POSTER_DEFAULT_CHAIN_ID,
   POSTER_DEFAULT_NETWORK,
 } from '../../constants/poster'
+import {
+  getChainFromChainId
+} from '../../constants/ethereum'
 
 type PIP1Post_Reply = {
   posts: string[]
@@ -57,14 +61,17 @@ export const ViewGraph = ({
   getAllPostsNeedsReload,
   isReloadIntervalLoading,
   dispatch,
-  isDeveloperModeEnabled
+  isDeveloperModeEnabled,
+  chainId, library, account
 }: {
   getAllPostsNeedsReload: boolean
   isReloadIntervalLoading: boolean
   dispatch: Dispatch<ActionType>
   isDeveloperModeEnabled: boolean
+  chainId: ChainId 
+  library: JsonRpcProvider
+  account: string
 }): JSX.Element => {
-  const { chainId, library, account } = useEthers()
   const [getPosts, { loading, error, data }] = useLazyQuery(
     GET_ALL_POSTS_IN_DESCENDING_ORDER,
     {
@@ -196,13 +203,11 @@ export const ViewGraph = ({
                         <ENS
                           props={{ mr: '1' }}
                           address={from.id}
+                          library={library}
                         />
                         <Link
                           isExternal
-                          href={`${getExplorerTransactionLink(
-                            id,
-                            chainId || POSTER_DEFAULT_CHAIN_ID
-                          )}`}
+                          href={getChainFromChainId(chainId || POSTER_DEFAULT_CHAIN_ID).getExplorerTransactionLink(id)}
                         >
                           <Text mx="1" fontSize="sm">
                             {format(timestamp * 1000)}
@@ -211,7 +216,7 @@ export const ViewGraph = ({
                         {isDeveloperModeEnabled && <>·<Tag ml="1">{type}</Tag> </>}
                       </Flex>
                     </Flex>
-                    <Text>{text}</Text>
+                    <Text aria-label="Post">{text}</Text>
                     {account &&
                       false && ( // @TODO: Disabling reply functionality for now.
                         <ChatIcon
