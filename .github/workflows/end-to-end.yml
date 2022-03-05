@@ -7,8 +7,7 @@ jobs:
     name: Nodejs Setup
     runs-on: ubuntu-latest
     steps:
-      - name: Uses node@16
-        uses: actions/setup-node@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
           registry-url: https://registry.npmjs.org/
@@ -20,8 +19,7 @@ jobs:
     needs: [node_deps]
     runs-on: ubuntu-latest
     steps:
-      - name: Download app repo
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
       - name: Install app dependencies
         run: yarn
@@ -34,8 +32,7 @@ jobs:
     needs: [node_deps]
     runs-on: ubuntu-latest
     steps:
-      - name: Download smart contracts
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           repository: onPoster/contract
           path: contract
@@ -49,8 +46,7 @@ jobs:
     needs: [node_deps]
     runs-on: ubuntu-latest
     steps:
-      - name: Download subgraph
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           repository: onPoster/subgraph
           path: subgraph
@@ -69,8 +65,7 @@ jobs:
         run: yarn node --hostname 0.0.0.0 &
         working-directory: contract
 
-      - name: Wait for hardhat node
-        uses: ifaxity/wait-on-action
+      - uses: ifaxity/wait-on-action
         with:
           resource: http://localhost:8545
 
@@ -88,8 +83,7 @@ jobs:
         run: docker-compose up -d
         working-directory: subgraph
 
-      - name: Wait for subgraph node
-        uses: ifaxity/wait-on-action
+      - uses: ifaxity/wait-on-action
         with:
           resource: http://localhost:8020
 
