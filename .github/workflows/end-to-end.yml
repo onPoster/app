@@ -58,6 +58,9 @@ jobs:
         run: docker-compose up -d
         working-directory: subgraph
 
+      - name: Wait for Docker containers to spin
+        run: sleep 60
+
       - name: Debug containers status
         run: docker ps -a
         working-directory: subgraph
