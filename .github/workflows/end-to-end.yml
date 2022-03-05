@@ -3,23 +3,17 @@ on:
   push:
     branches: ['**']
 jobs:
-  node_deps:
-    name: Nodejs Setup
+  ##### App, node, subgraph setup #####
+  setup_app:
+    name: Poster App (setup)
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
           registry-url: https://registry.npmjs.org/
           cache: yarn
-
-  ##### App, node, subgraph setup #####
-  setup_app:
-    name: Poster App (setup)
-    needs: [node_deps]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
 
       - name: Install app dependencies
         run: yarn
@@ -29,7 +23,6 @@ jobs:
 
   setup_contract:
     name: Poster Contract (setup)
-    needs: [node_deps]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -37,19 +30,32 @@ jobs:
           repository: onPoster/contract
           path: contract
 
+      - uses: actions/setup-node@v2
+        working-directory: contract
+        with:
+          node-version: '16.x'
+          registry-url: https://registry.npmjs.org/
+          cache: yarn
+
       - name: Install contract dependencies
         run: yarn
         working-directory: contract
 
   setup_subgraph:
     name: Poster Subgraph (setup)
-    needs: [node_deps]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           repository: onPoster/subgraph
           path: subgraph
+
+      - uses: actions/setup-node@v2
+        working-directory: subgraph
+        with:
+          node-version: '16.x'
+          registry-url: https://registry.npmjs.org/
+          cache: yarn
 
       - name: Install subgraph dependencies
         run: yarn
