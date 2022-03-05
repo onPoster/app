@@ -6,15 +6,14 @@ jobs:
   ##### RPC node + Subgraph server #####
   test:
     name: Poster e2e
-    needs: [node_deps]
     runs-on: ubuntu-latest
     steps:
       ##### Setup #####
       - uses: actions/setup-node@v2
-          with:
-            node-version: 16
-            registry-url: https://registry.npmjs.org/
-            cache: yarn
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+          cache: yarn
 
       ##### App setup #####
       - uses: actions/checkout@v2
