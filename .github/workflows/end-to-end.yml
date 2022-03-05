@@ -41,7 +41,7 @@ jobs:
         working-directory: contract
 
       - name: Run hardhat node
-        run: yarn node --hostname 0.0.0.0 &
+        run: yarn run node --hostname 0.0.0.0 &
         working-directory: contract
 
       - uses: ifaxity/wait-on-action@v1
@@ -71,9 +71,9 @@ jobs:
         run: docker-compose up -d
         working-directory: subgraph
 
-      - uses: ifaxity/wait-on-action@v1
-        with:
-          resource: http://localhost:8020
+      # - uses: ifaxity/wait-on-action@v1
+      #   with:
+      #     resource: http://localhost:8020
 
       - name: Configure subgraph for local node
         run: NETWORK=localhost yarn define
