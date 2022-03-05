@@ -55,7 +55,7 @@ jobs:
   ##### The Graph Indexer #####
   run_graph:
     name: Poster Subgraph
-    needs: [node_deps]
+    needs: [run_node]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -85,14 +85,18 @@ jobs:
         run: yarn codegen && yarn build
         working-directory: subgraph
 
+      - name: Create subgraph for local node
+        run: yarn create-local
+        working-directory: subgraph
+
       - name: Deploy subgraph to local node
-        run: yarn create-local && yarn deploy-local -l v0.0.1",
+        run: yarn deploy-local -l v0.0.1",
         working-directory: subgraph
 
   ##### Poster App #####
   run_app:
     name: Poster App
-    needs: [run_node, run_graph, setup_app]
+    needs: [run_graph, setup_app]
     runs-on: ubuntu-latest
     steps:
       - name: Run Poster app
