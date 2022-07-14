@@ -1,47 +1,29 @@
-```
-██████╗  ██████╗ ███████╗████████╗███████╗██████╗
-██╔══██╗██╔═══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗
-██████╔╝██║   ██║███████╗   ██║   █████╗  ██████╔╝
-██╔═══╝ ██║   ██║╚════██║   ██║   ██╔══╝  ██╔══██╗
-██║     ╚██████╔╝███████║   ██║   ███████╗██║  ██║
-╚═╝      ╚═════╝ ╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
-    ___
-   /   |  ____  ____
-  / /| | / __ \/ __ \
- / ___ |/ /_/ / /_/ /
-/_/  |_/ .___/ .___/
-      /_/   /_/
+This is a [RainbowKit](https://rainbowkit.com) + [wagmi](https://wagmi.sh) + [Next.js](https://nextjs.org/) project bootstrapped with [`create-rainbowkit`](https://github.com/rainbow-me/rainbowkit/tree/main/packages/create-rainbowkit).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
 ```
 
-An app for a ridiculously simple general purpose social media smart contract.
-It takes a string as a parameter and emits that string, along with msg.sender, as an event. That's it.
-The app is a simple UI to create and wrap the content in a PIP-friendly format parseable by our subgraphs.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-The Poster smart contract can be found [here](https://github.com/onPoster/contract).
+You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-# Architecture
+## Learn More
 
-`Poster App` is structured by `4` main components:
+To learn more about this stack, take a look at the following resources:
 
-1. `Poster` - A EVM-compatible append-only content smart contract. See [here](https://github.com/onPoster/contract) for more information.
-2. `PIPs` - Poster Improvement Proposals (or PIPs), which define the schema and format of content that will be parsed in our [TheGraph](https://thegraph.com/) subgraph. All PIPs can be found [here](https://github.com/onPoster/PIP), and you can see the original PIP (PIP-01 or ERC-3722) [here](https://ethereum-magicians.org/t/erc-3722-poster-a-ridiculously-simple-general-purpose-social-media-smart-contract/6751)
-3. `Subgraph` - An indexer powered by TheGraph protocol able to organize and parse posted contents sent to the Poster contract into readable and structured messages. See [here](https://github.com/onPoster/subgraph) for more information.
-4. `App` - A sample UI to showcase Poster via a web3 provider like Metamask. See [here](https://github.com/onPoster/app) for more information.
+- [RainbowKit Documentation](https://rainbowkit.com) - Learn how to customize your wallet connection flow.
+- [wagmi Documentation](https://wagmi.sh) - Learn how to interact with Ethereum.
+- [Next.js Documentation](https://nextjs.org/docs) - Learn how to build a Next.js application.
 
-# Apps
+You can check out [the RainbowKit GitHub repository](https://github.com/rainbow-me/rainbowkit) - your feedback and contributions are welcome!
 
-`Poster App` is one of other existing apps within the `Poster` ecosystem:
+## Deploy on Vercel
 
-- [Postum](https://github.com/onPoster/postum). A forum-like alternative to Discourse powered by `Poster`.
-- [Proxy Poster](https://github.com/onPoster/proxy). A meta-transaction layer to allow gas-less posts on top of `Poster` using `EIP-2771`.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-# Getting started
-
-1. Start a node and deploy `Poster` from [contracts repository](https://github.com/onPoster/contract) by running `yarn run node && yarn deploy`
-2. Start a graph node from the [subgraph repository](https://github.com/onPoster/subgraph) by running `docker-compose up -d`
-3. To deploy the subgraph to the graph node, run `NETWORK=localhost npm run define`, then `npm run codegen`, `npm run build`, `npm run create-local`, and finally, `npm run deploy-local`
-4. Start the app ui frmo the [apps repository](https://github.com/onPoster/app) by running `yarn dev:local`
-
----
-
-`Made with ❤️ by jjperezaguinaga.eth`
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

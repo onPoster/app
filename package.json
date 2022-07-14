@@ -1,80 +1,26 @@
 {
-  "name": "@ethposter/app",
-  "author": "@jjperezaguinaga",
-  "license": "GPL-3.0+",
+  "name": "poster-app",
+  "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "POSTER_APP_VERSION=$(git rev-parse --short HEAD) next dev",
-    "dev:local": "POSTER_CHAIN=31337 POSTER_APP_VERSION=$(git rev-parse --short HEAD) next dev",
-    "build": "POSTER_APP_VERSION=$(git rev-parse --short HEAD) next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
-    "export": "next export",
-    "type-check": "tsc --pretty --noEmit",
-    "format": "prettier --write .",
-    "lint": "eslint . --ext ts --ext tsx --ext js",
-    "test": "jest",
-    "test-all": "yarn lint && yarn type-check && yarn test"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "yarn run type-check"
-    }
-  },
-  "lint-staged": {
-    "*.@(ts|tsx)": [
-      "yarn lint"
-    ]
+    "lint": "next lint"
   },
   "dependencies": {
-    "@apollo/client": "3.1.1",
-    "@chakra-ui/icons": "^1.0.14",
-    "@chakra-ui/react": "^1.6.3",
-    "@emotion/react": "^11",
-    "@emotion/styled": "^11",
-    "@ethposter/subgraph": "https://github.com/onPoster/subgraph.git#0.1.0",
-    "@usedapp/core": "^0.11.0",
-    "@web3-react/walletconnect-connector": "^6.2.0",
-    "Poster": "https://github.com/onPoster/contract.git#v7.0.0",
-    "blockies-ts": "^1.0.0",
-    "deepmerge": "^4.2.2",
-    "eth-hooks": "^4.0.44",
-    "ethers": "^5.5.1",
-    "framer-motion": "^4",
-    "graphql": "^15.3.0",
-    "ipfs-http-client": "^49.0.4",
-    "lodash": "4.17.21",
-    "next": "^11.0.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-icons": "^4.2.0",
-    "timeago.js": "^4.0.2",
-    "use-debounce": "7.0.1"
+    "@rainbow-me/rainbowkit": "^0.4.2",
+    "ethers": "^5.0.0",
+    "next": "^12.1.6",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "wagmi": "^0.5.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.19.2",
-    "@testing-library/react": "^11.2.5",
-    "@types/jest": "^26.0.20",
-    "@types/node": "^14.14.25",
-    "@types/react": "^17.0.1",
-    "@typescript-eslint/eslint-plugin": "^4.14.2",
-    "@typescript-eslint/parser": "^4.14.2",
-    "babel-jest": "^26.6.3",
-    "eslint": "^7.19.0",
-    "eslint-config-next": "^11.0.1",
-    "eslint-config-prettier": "^7.2.0",
-    "eslint-plugin-react": "^7.19.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
-    "husky": "^4.2.3",
-    "identity-obj-proxy": "^3.0.0",
-    "jest": "^26.6.3",
-    "jest-watch-typeahead": "^0.6.1",
-    "lint-staged": "^10.0.10",
-    "playwright": "^1.19.2",
-    "prettier": "^2.0.2",
-    "typescript": "4.3.2"
+    "@types/node": "^17.0.35",
+    "@types/react": "^18.0.9",
+    "eslint": "^8.15.0",
+    "eslint-config-next": "^12.1.6",
+    "typescript": "^4.7.2"
   }
 }

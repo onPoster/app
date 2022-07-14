@@ -1,165 +1,84 @@
-import {
-  Box,
-  Button,
-  InputGroup,
-  InputRightElement,
-  Text,
-  Textarea,
-  useColorMode,
-  SimpleGrid,
-  Flex,
-} from '@chakra-ui/react'
-import { ApolloProvider } from '@apollo/client'
-import React, { useReducer, useState, useEffect } from 'react'
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import styles from '../styles/Home.module.css';
 
-import { DarkModeSwitch } from '../components/atoms/DarkModeSwitch'
-import { ViewGraph } from '../components/atoms/ViewGraph'
-import Layout from '../components/layout/Layout'
-import { AddImage } from '../components/molecules/AddImage'
-import { PosterImage } from '../components/atoms/PosterImage'
-
-import { getApollo } from '../lib/apolloClient'
-import { initialState, reducer, setPostContent } from '../lib/reducers'
-import { createURLForCID } from '../lib/connectors'
-
-import {
-  POSTER_MAX_AMOUNT_OF_CHARACTERS,
-  POSTER_SUBGRAPH_URLS_BY_CHAIN_ID_MAP,
-  POSTER_DEFAULT_CHAIN_ID,
-  POSTER_CONTRACT_ADDRESS,
-} from '../constants/poster'
-import {
-  POSTER_UI_BG_COLOR_MAP,
-  POSTER_UI_TEXT_COLOR_MAP,
-} from '../constants/ui'
-import { useEthersWithFallback } from '../lib/hooks'
-
-function HomeIndex(): JSX.Element {
-  const [state, dispatch] = useReducer(reducer, initialState)
-  const { account, chainId, library, fallback, activate, deactivate, activateBrowserWallet } = useEthersWithFallback()
-  const currentAccount = state.useFallbackAccount ? fallback.account : account
-  const [apolloClient, setApolloClient] = useState()
-  const { colorMode } = useColorMode()
-
-  useEffect(() => {
-    const subgraphURL =
-      POSTER_SUBGRAPH_URLS_BY_CHAIN_ID_MAP[
-      chainId ? chainId : POSTER_DEFAULT_CHAIN_ID
-      ]
-    const apolloClient = getApollo(subgraphURL)
-    setApolloClient(apolloClient)
-    return () => {
-      setApolloClient(null)
-    }
-  }, [chainId])
-
-  const remainingCharacters =
-    POSTER_MAX_AMOUNT_OF_CHARACTERS - state.charactersAmount
-
+const Home: NextPage = () => {
   return (
-    <Layout
-      account={account}
-      chainId={chainId}
-      fallback={fallback}
-      dispatch={dispatch}
-      isDeveloperModeEnabled={state.settingsDeveloper}
-      useFallbackAccount={state.useFallbackAccount} 
-      activate={activate}
-      deactivate={deactivate}
-      activateBrowserWallet={activateBrowserWallet}
-    >
-      <SimpleGrid columns={[1, 1, 1, 2]}>
-        <Box
-          maxWidth="container.sm"
-          p="8"
-          bg={POSTER_UI_BG_COLOR_MAP.containers[colorMode]}
-        >
-          <Box>
-            {currentAccount && state.replyToContentId && (
-              <Text>You are replying to: {state.replyToContent}</Text>
-            )}
-            {state.previewImageError && (
-              <Text>
-                Error trying to upload image: {state.previewImageError}
-              </Text>
-            )}
-            <InputGroup size="sm">
-              <Textarea
-                aria-label='Post content'
-                bg={POSTER_UI_BG_COLOR_MAP.textArea[colorMode]}
-                color={POSTER_UI_TEXT_COLOR_MAP[colorMode]}
-                type="text"
-                rows={10}
-                cols={10}
-                isDisabled={state.isLoading || !currentAccount}
-                wrap="soft"
-                maxLength={300}
-                style={{ overflow: 'hidden', resize: 'none' }}
-                value={state.inputValue}
-                placeholder="Post something funny."
-                onChange={(e) => {
-                  dispatch({
-                    type: 'SET_CHARACTERS_AMOUNT',
-                    charactersAmount: e.target.value.length,
-                  })
-                  dispatch({
-                    type: 'SET_INPUT_VALUE',
-                    inputValue: e.target.value,
-                  })
-                }}
-              />
-              <InputRightElement>
-                <Text
-                  color={remainingCharacters < 10 ? 'yellow.500' : 'alphaBlack'}
-                >{`${remainingCharacters}`}</Text>
-              </InputRightElement>
-            </InputGroup>
-            {currentAccount && state.previewImageCID && (
-              <PosterImage src={createURLForCID(state.previewImageCID)} />
-            )}
-            <Flex alignItems="center" justifyContent="space-between">
-              {currentAccount && (
-                <AddImage isDisabled={state.isLoading} dispatch={dispatch} />
-              )}
-              <Button
-                aria-label='Submit Post'
-                mt="2"
-                colorScheme="teal"
-                isDisabled={!currentAccount}
-                isLoading={state.isLoading}
-                onClick={() =>
-                  setPostContent(
-                    POSTER_CONTRACT_ADDRESS,
-                    state,
-                    state.useFallbackAccount ? fallback.signer : library.getSigner(),
-                    dispatch
-                  )
-                }
-              >
-                {currentAccount ? 'Post' : 'Connect wallet to post'}
-              </Button>
-            </Flex>
-          </Box>
-        </Box>
-        <Box p="5">
-          {apolloClient && (
-            <ApolloProvider client={apolloClient}>
-              <ViewGraph
-                account={account}
-                chainId={chainId}
-                library={library}
-                getAllPostsNeedsReload={state.needsToReloadGetAllPosts}
-                isReloadIntervalLoading={state.isReloadIntervalLoading}
-                dispatch={dispatch}
-                isDeveloperModeEnabled={state.settingsDeveloper}
-              />
-            </ApolloProvider>
-          )}
-        </Box>
-      </SimpleGrid>
-      <DarkModeSwitch />
-    </Layout>
-  )
-}
+    <div className={styles.container}>
+      <Head>
+        <title>RainbowKit App</title>
+        <meta
+          name="description"
+          content="Generated by @rainbow-me/create-rainbowkit"
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
 
-export default HomeIndex
+      <main className={styles.main}>
+        <ConnectButton />
+
+        <h1 className={styles.title}>
+          Welcome to <a href="">RainbowKit</a> + <a href="">wagmi</a> +{' '}
+          <a href="https://nextjs.org">Next.js!</a>
+        </h1>
+
+        <p className={styles.description}>
+          Get started by editing{' '}
+          <code className={styles.code}>pages/index.tsx</code>
+        </p>
+
+        <div className={styles.grid}>
+          <a href="https://rainbowkit.com" className={styles.card}>
+            <h2>RainbowKit Documentation &rarr;</h2>
+            <p>Learn how to customize your wallet connection flow.</p>
+          </a>
+
+          <a href="https://wagmi.sh" className={styles.card}>
+            <h2>wagmi Documentation &rarr;</h2>
+            <p>Learn how to interact with Ethereum.</p>
+          </a>
+
+          <a
+            href="https://github.com/rainbow-me/rainbowkit/tree/main/examples"
+            className={styles.card}
+          >
+            <h2>RainbowKit Examples &rarr;</h2>
+            <p>Discover boilerplate example RainbowKit projects.</p>
+          </a>
+
+          <a href="https://nextjs.org/docs" className={styles.card}>
+            <h2>Next.js Documentation &rarr;</h2>
+            <p>Find in-depth information about Next.js features and API.</p>
+          </a>
+
+          <a
+            href="https://github.com/vercel/next.js/tree/canary/examples"
+            className={styles.card}
+          >
+            <h2>Next.js Examples &rarr;</h2>
+            <p>Discover and deploy boilerplate example Next.js projects.</p>
+          </a>
+
+          <a
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+            className={styles.card}
+          >
+            <h2>Deploy &rarr;</h2>
+            <p>
+              Instantly deploy your Next.js site to a public URL with Vercel.
+            </p>
+          </a>
+        </div>
+      </main>
+
+      <footer className={styles.footer}>
+        <a href="https://rainbow.me" target="_blank" rel="noopener noreferrer">
+          Made with ❤️ by your frens at 🌈
+        </a>
+      </footer>
+    </div>
+  );
+};
+
+export default Home;

@@ -1,43 +1,51 @@
-import { ChakraProvider } from '@chakra-ui/react'
-import {
-  ChainId,
-  Config,
-  DAppProvider,
-  Goerli,
-  Hardhat,
-  Polygon,
-  xDai,
-} from '@usedapp/core'
-import type { AppProps } from 'next/app'
-import React from 'react'
-import { ETHEREUM_PROVIDERS } from '../constants/ethereum'
+import '../styles/globals.css';
+import '@rainbow-me/rainbowkit/styles.css';
+import type { AppProps } from 'next/app';
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
 
-const config: Config = {
-  readOnlyUrls: {
-    [ChainId.Goerli]: ETHEREUM_PROVIDERS[ChainId.Goerli],
-    [ChainId.Polygon]: ETHEREUM_PROVIDERS[ChainId.Polygon],
-    [ChainId.xDai]: ETHEREUM_PROVIDERS[ChainId.xDai],
-    [ChainId.Hardhat]: ETHEREUM_PROVIDERS[ChainId.Hardhat],
-  },
-  networks: [
-    Goerli,
-    Polygon,
-    xDai,
-    Hardhat,
+const { chains, provider, webSocketProvider } = configureChains(
+  [
+    chain.mainnet,
+    chain.polygon,
+    chain.optimism,
+    chain.arbitrum,
+    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true'
+      ? [chain.goerli, chain.kovan, chain.rinkeby, chain.ropsten]
+      : []),
   ],
-  multicallAddresses: {
-    [ChainId.Hardhat]: "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9"
-  },
-}
+  [
+    alchemyProvider({
+      // This is Alchemy's default API key.
+      // You can get your own at https://dashboard.alchemyapi.io
+      alchemyId: '_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC',
+    }),
+    publicProvider(),
+  ]
+);
 
-const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
+const { connectors } = getDefaultWallets({
+  appName: 'RainbowKit App',
+  chains,
+});
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+  webSocketProvider,
+});
+
+function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <DAppProvider config={config}>
-      <ChakraProvider>
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider chains={chains}>
         <Component {...pageProps} />
-      </ChakraProvider>
-    </DAppProvider>
-  )
+      </RainbowKitProvider>
+    </WagmiConfig>
+  );
 }
 
-export default MyApp
+export default MyApp;
