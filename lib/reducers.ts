@@ -191,6 +191,10 @@ export async function setPostContent(
         type: 'SET_CHARACTERS_AMOUNT',
         charactersAmount: 0,
       })
+      dispatch({
+        type: 'SET_PREVIEW_IMAGE_CID',
+        previewImageCID: null,
+      })
       // @TODO: Decide to remove this altogether to only show upon
       // event detection via the additional RPC provider.
       // dispatch({

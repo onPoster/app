@@ -68,9 +68,8 @@ function HomeIndex(): JSX.Element {
       deactivate={deactivate}
       activateBrowserWallet={activateBrowserWallet}
     >
-      <SimpleGrid columns={[1, 1, 1, 2]}>
+      <SimpleGrid columns={[1, 1, 1, 1]}>
         <Box
-          maxWidth="container.sm"
           p="8"
           bg={POSTER_UI_BG_COLOR_MAP.containers[colorMode]}
         >
@@ -89,14 +88,14 @@ function HomeIndex(): JSX.Element {
                 bg={POSTER_UI_BG_COLOR_MAP.textArea[colorMode]}
                 color={POSTER_UI_TEXT_COLOR_MAP[colorMode]}
                 type="text"
-                rows={10}
+                rows={2}
                 cols={10}
                 isDisabled={state.isLoading || !currentAccount}
                 wrap="soft"
-                maxLength={300}
+                width="100%"
                 style={{ overflow: 'hidden', resize: 'none' }}
                 value={state.inputValue}
-                placeholder="Post something funny."
+                placeholder="Post something funny :)"
                 onChange={(e) => {
                   dispatch({
                     type: 'SET_CHARACTERS_AMOUNT',

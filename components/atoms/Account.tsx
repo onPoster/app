@@ -1,13 +1,11 @@
 import {
   Button,
   Flex,
-  Image,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
 } from '@chakra-ui/react'
-import blockies from 'blockies-ts'
 import styled from '@emotion/styled'
 import { useClipboard } from '@chakra-ui/react'
 
@@ -32,11 +30,6 @@ const ReadyBalancedButton = styled(BalancedButton)`
 `
 
 export const Account = ({ account, dispatch, useFallbackAccount, deactivate }: { account: string, dispatch: React.Dispatch<ActionType>, useFallbackAccount: boolean, deactivate: () => void }) => {
-  let blockieImageSrc
-  if (typeof window !== 'undefined') {
-    blockieImageSrc = blockies.create({ seed: account }).toDataURL()
-  }
-
   const {hasCopied, onCopy} = useClipboard(account);
 
   return (
@@ -46,7 +39,6 @@ export const Account = ({ account, dispatch, useFallbackAccount, deactivate }: {
       justifyContent={['flex-start', null, null, 'flex-end']}
       w={{ base: '200%', md: 'auto' }}
     >
-      <Image ml="4" src={blockieImageSrc} alt="blockie" />
       <Menu placement="bottom-end">
         <MenuButton aria-label='Address' as={ReadyBalancedButton} ml="4" w={{ base: '200%', md: 'auto' }}>
           {truncate(account)}

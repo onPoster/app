@@ -149,10 +149,10 @@ const Layout = ({
             columns={[3, 2, 2, 2]}
             alignItems="center"
             justifyContent="space-between"
-            py="4"
+            py="2"
           >
             <Headline />
-            <Flex justifySelf="flex-end">
+            <Flex justifySelf={['flex-start', null, null, 'flex-end']}>
               <Flex mx="2">
                 <IconButton
                   mx="1"
